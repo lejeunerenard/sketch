@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title></title>
+      <style>
+html, body {
+   height: 100%;
+   width: 100%;
+   padding: 0;
+   margin: 0;
+}
+#dropzone, #wave {
+   height: 100%;
+   width: 100%;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+}
+      </style>
+   </head>
+   <body>
+      <div id="wave"></div>
+      <div id="dropzone"></div>
+      <script src="waveform.js"></script>
+      <script>
+// Add max function to Float32Arrays
+Float32Array.prototype.max = function(){
+   var max = -Infinity, i = this.length;
+   while ( i-- ) {
+      if ( this[i] > max ) max = this[i];
+   }
+   return max;
+};
+
+var maxY = 0;
+var soundData;
+
+var waveform = new Waveform({
+   container: document.getElementById('wave'),
+   outerColor: '#222',
+   innerColor: function(x, y){
+      var h = Math.abs(y) / maxY;
+      if ( h > .75 ) {
+         return '#77F5F9';
+      } else if ( h > .5 ) {
+         return '#B2FFBC';
+      } else if ( h > .25 ) {
+         return '#F9E2B1';
+      } else {
+         return '#F4B2CE';
+      }
+   },
+   data: []
+});
+
+var context = new AudioContext()
+
+window.addEventListener('load', function() {
+    var dropzone = document.querySelector('#dropzone');
+    dropzone.addEventListener('drop', handleDrop, false)
+    dropzone.addEventListener('dragover', handleDragOver, false)
+})
+window.addEventListener( 'resize', function() {
+   // Resize canvas
+   waveform.canvas.width = window.innerWidth;
+   waveform.canvas.height = window.innerHeight;
+
+   // Resize waveform
+   waveform.width = window.innerWidth;
+   waveform.height = window.innerHeight;
+
+   waveform.update({
+      data: soundData,
+   });
+})
+
+var handleDragOver = function(e) {
+    e.preventDefault()
+    e.stopPropagation()
+}
+
+var handleDrop = function(e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    var files = e.dataTransfer.files
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i]
+        var reader = new FileReader()
+        reader.addEventListener('load', function(e) {
+            var data = e.target.result
+            context.decodeAudioData(data, function(buffer) {
+                soundData = buffer.getChannelData(0)
+                maxY = soundData.max();
+                waveform.update({
+                   data: soundData,
+                });
+            })
+        })
+        reader.readAsArrayBuffer(file)
+    }
+}
+      </script>
+   </body>
+</html>
