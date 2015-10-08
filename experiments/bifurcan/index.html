@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+      <link rel="apple-touch-icon" href="icon-iphone.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="icon-ipad.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="icon-iphone-retina.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="icon-ipad-retina.png">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="black">
+      <title>Bifurcan Clone</title>
+      <style>
+html, body {
+   width: 100%;
+   height: 100%;
+   height: 100vh;
+   overflow: hidden;
+   padding: 0;
+   margin: 0;
+}
+canvas {
+   width: 100%;
+   height: 100%;
+   background: #222;
+   image-rendering: optimizeSpeed;             /* Older versions of FF          */
+   image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+   image-rendering: -webkit-optimize-contrast; /* Safari                        */
+   image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+   image-rendering: pixelated;                 /* Awesome future-browsers       */
+   -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+}
+#credits {
+   position: absolute;
+   bottom: 0;
+   height: 10%;
+   height: 10vh;
+   width: 100%;
+   overflow: hidden;
+}
+.content {
+   background: white;
+
+   position: absolute;
+   bottom: -5vh;
+   left: 0;
+   -webkit-transition: bottom 1s;
+   transition: bottom 1s;
+
+   padding: 5px;
+
+   color: black;
+   font-family: Verdana, sans-serif;
+   font-size: .625em;
+}
+#credits:hover .content {
+   bottom: 0;
+}
+#credits a {
+   color: inherit;
+   text-decoration: none;
+}
+#credits a:hover {
+   text-decoration: underline;
+}
+      </style>
+   </head>
+   <body>
+      <canvas></canvas>
+      <div id="credits">
+         <div class="content">
+            Clone of <a href="http://wiki.xxiivv.com/Bifurcan">Bifurcan</a>
+         </div>
+      </div>
+      <script>
+function Box(position, width, state) {
+   // Top left corner of box
+   this.position = position;
+
+   // Length of side
+   this.width = width;
+
+   // Whether will the grain or against
+   this.state = state || 0;
+}
+Box.prototype.render = function render(grid) {
+   var ctx = grid.ctx;
+   var offset = grid.offset;
+
+   ctx.lineWidth = 1;
+   ctx.beginPath();
+   if ( this.state ) {
+      ctx.moveTo(this.position.x + offset.x, this.position.y + offset.y);
+      ctx.lineTo(this.position.x + offset.x + this.width, this.position.y + offset.y + this.width);
+   } else {
+      ctx.moveTo(this.position.x + offset.x, this.position.y + offset.y + this.width);
+      ctx.lineTo(this.position.x + offset.x + this.width, this.position.y + offset.y);
+   }
+   ctx.strokeStyle = '#fff';
+   ctx.stroke();
+};
+
+function Grid(side, canvas) {
+   this.canvas = canvas || document.querySelector('canvas');
+
+   this.ctx = this.canvas.getContext('2d');
+   this.ctx.imageSmoothingEnabled = false;
+
+   this.side = side || 13;
+
+   // Global offset
+   this.offset = { x: 0, y: 0 };
+
+   this.init();
+}
+Grid.prototype.init = function init() {
+   this.canvas.width = window.innerWidth;
+   this.canvas.height = window.innerHeight;
+
+   this.boxes = [];
+   var x = y = - this.side;
+
+   // Creating Boxes
+   this.boxWidth = Math.ceil( this.canvas.width / this.side ) + 1;
+   this.boxHeight = Math.ceil( this.canvas.height / this.side ) + 1;
+
+   // Loop top to bottom
+   // This starts at -1, -1 in box space. That way the whole grid can be
+   // adjusted by a fraction of a block to center the time absolutely.
+   while ( y < this.canvas.height + this.side ) {
+      while ( x < this.canvas.width + this.side  ) {
+         this.boxes.push( new Box({x: x, y: y}, this.side, 0));
+         x += this.side;
+      }
+      x = 0;
+      y += this.side;
+   }
+};
+
+Grid.prototype.updateBox = function updateBox(position, state) {
+   // the 2 '+1's are for the -1, -1 box space offset
+   this.boxes[ 1 + position.x + ( position.y + 1 ) * this.boxWidth ].state = state;
+};
+Grid.prototype.render = function render() {
+   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+   var i = this.boxes.length;
+   while ( i-- ) {
+      this.boxes[i].render(this);
+   }
+};
+
+function Clock(options) {
+   options = options || {};
+
+   this.grid = new Grid( options.density || 20);
+
+   // Calculate canvas space offset
+   this.grid.offset = {
+      x: Math.floor( ( window.innerWidth - ( this.grid.boxWidth * this.grid.side ) ) / 2 ),
+      y: 0,
+   };
+
+   this.numbers = [
+      // 0
+      [ [ 1, 1, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 1, 1 ],
+      ],
+      // 1
+      [ [ 1, 1, 0 ],
+        [ 0, 1, 0 ],
+        [ 0, 1, 0 ],
+        [ 0, 1, 0 ],
+        [ 1, 1, 1 ],
+      ],
+      // 2
+      [ [ 1, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 1, 1, 1 ],
+        [ 1, 0, 0 ],
+        [ 1, 1, 1 ],
+      ],
+      // 3
+      [ [ 1, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 0, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 1, 1, 1 ],
+      ],
+      // 4
+      [ [ 1, 0, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 0, 0, 1 ],
+      ],
+      // 5
+      [ [ 1, 1, 1 ],
+        [ 1, 0, 0 ],
+        [ 1, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 1, 1, 1 ],
+      ],
+      // 6
+      [ [ 1, 1, 1 ],
+        [ 1, 0, 0 ],
+        [ 1, 1, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 1, 1 ],
+      ],
+      // 7
+      [ [ 1, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 0, 0, 1 ],
+        [ 0, 0, 1 ],
+        [ 0, 0, 1 ],
+      ],
+      // 8
+      [ [ 1, 1, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 1, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 1, 1 ],
+      ],
+      // 9
+      [ [ 1, 1, 1 ],
+        [ 1, 0, 1 ],
+        [ 1, 1, 1 ],
+        [ 0, 0, 1 ],
+        [ 0, 0, 1 ],
+      ]
+   ];
+
+   window.addEventListener('resize', function() {
+      this.grid.init();
+      this.grid.offset = {
+         x: Math.floor( ( window.innerWidth - ( this.grid.boxWidth * this.grid.side ) ) / 2 ),
+         y: 0,
+      };
+      this.update();
+   }.bind(this));
+
+   // First rend
+   this.update();
+}
+Clock.prototype.updateNumber = function updateNumber(numberPosition, integer) {
+   var bitMap = this.numbers[integer];
+
+   for ( var i = 0; i < bitMap.length; i ++ ) {
+      var row = bitMap[i];
+      for ( var j = 0; j < row.length; j ++ ) {
+         this.grid.updateBox({ x: j + numberPosition.x, y: i + numberPosition.y }, row[j]);
+      }
+   }
+};
+Clock.prototype.update = function update() {
+   this.currentTime = new Date();
+
+   // Update grid
+   var hours = this.currentTime.getHours() + '';
+   if ( this.currentTime.getHours() < 10 ) {
+      hours = '0' + hours;
+   }
+   var minutes = this.currentTime.getMinutes() + '';
+   if ( this.currentTime.getMinutes() < 10 ) {
+      minutes = '0' + minutes;
+   }
+   var seconds = this.currentTime.getSeconds() + '';
+   if ( this.currentTime.getSeconds() < 10 ) {
+      seconds = '0' + seconds;
+   }
+
+   var time = [
+      hours,
+      minutes,
+      seconds
+   ];
+
+   // Center via offset
+   var offset = {
+      x: Math.floor( ( this.grid.boxWidth - ( 2 * 4 - 1 ) ) / 2 ),
+      y: Math.floor( ( this.grid.boxHeight - ( 3 * 6 - 1 ) ) / 2 ),
+   };
+   for ( var i = 0; i < time.length; i ++ ) {
+      var row = time[i];
+      for ( var j = 0; j < row.length; j ++ ) {
+         this.updateNumber({ x: j * 4 + offset.x, y: offset.y + ( i * 6 ) }, parseInt(row[j]));
+      }
+   }
+
+   // Finally render the grid
+   this.grid.render();
+};
+Clock.prototype.run = function run() {
+   this.tick = setInterval(function tick() { clock.update(); }, 1000);
+};
+
+var clock = new Clock({
+   density: 15,
+});
+clock.run();
+
+      </script>
+   </body>
+</html>
