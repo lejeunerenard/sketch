@@ -5,6 +5,14 @@ export default class Triangle {
       this.sideLength = options.sideLength || 5;
       this.rotate = options.rotate || 0;
 
+      // Colors
+      this.fillStyle = options.fillStyle;
+      this.strokeStyle = options.strokeStyle;
+
+      if ( ( !this.fillStyle ) && ( !this.strokeStyle ) ) {
+         this.strokeStyle = '#000';
+      }
+
       // Position is the top left of the triangle
       this.x = options.x;
       this.y = options.y;
@@ -52,8 +60,17 @@ export default class Triangle {
          );
       }
 
-      ctx.strokeStyle = '#000';
-      ctx.stroke();
+      ctx.closePath();
+
+      // Color it in
+      if ( this.fillStyle ) {
+         ctx.fillStyle = this.fillStyle;
+         ctx.fill();
+      }
+      if ( this.strokeStyle ) {
+         ctx.strokeStyle = this.strokeStyle;
+         ctx.stroke();
+      }
    }
 
    getNudged(x) {
