@@ -28,6 +28,11 @@ class App {
    run() {
       this.draw();
 
+      window.setInterval(() => {
+         this.createTriangles();
+         this.draw();
+      }, 100);
+
       window.addEventListener('resize', () => {
          this.width = window.innerWidth;
          this.height = window.innerHeight;
@@ -54,11 +59,40 @@ class App {
             let offset = this.sideLength / 2 * toggle;
             toggle = !toggle;
 
+            let redColor = Math.floor(
+               255 - ( 128 + 
+                      Math.random() * 128 ) *
+                  ( triangleWidth / this.width )
+            ).toString(16);
+
+            if ( redColor.length < 2 ) {
+               redColor = '0'+redColor;
+            }
+
+            let blueColor = Math.floor(
+               255 * ( triangleWidth / this.width )
+            ).toString(16);
+
+            if ( blueColor.length < 2 ) {
+               blueColor = '0'+blueColor;
+            }
+
+            let greenColor = Math.floor(
+               ( 128 + 
+                      Math.random() * 128 ) *
+                  ( triangleWidth / this.width )
+            ).toString(16);
+
+            if ( greenColor.length < 2 ) {
+               greenColor = '0'+greenColor;
+            }
+
             // Create triangle pointing right
             this.triangles.push(new Triangle({
                x: triangleWidth,
                y: triangleHeight + offset,
                sideLength: this.sideLength,
+               fillStyle: '#' + redColor + greenColor + blueColor,
             }));
 
             // Create triangle pointing left
@@ -67,8 +101,8 @@ class App {
                y: triangleHeight + ( this.sideLength / 2 ) + offset,
                sideLength: this.sideLength,
                rotate: 180,
+               fillStyle: '#' + redColor + greenColor + blueColor,
             }));
-
 
             // H = B/2
             triangleWidth += this.sideLength / 2;
