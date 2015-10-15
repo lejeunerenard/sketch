@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+      <link rel="icon" href="favicon.png?ver=1.0" sizes="32x32">
+      <link rel="apple-touch-icon" href="icon-iphone.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="icon-ipad.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="icon-iphone-retina.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="icon-ipad-retina.png">
+
+      <title>rnd blocks</title>
+
+      <style>
+* {
+   padding: 0;
+   margin: 0;
+   box-sizing: border-box;
+}
+body, html {
+   height: 100%;
+}
+#frame {
+   width: 100%;
+   height: 100%;
+   background: #222;
+   color: #ccc;
+   text-align: center;
+   padding-top: 5vh;
+   font-size: 16px;
+   font-family: ‘Courier New’, Courier, monospace;
+}
+      </style>
+   </head>
+   <body>
+      <div id="frame">
+      </div>
+      <script src="app.js"></script>
+      <script>
+         var frame = document.getElementById('frame');
+
+         function genFrame() {
+            var maxBlockWidth = Math.floor( window.innerWidth / 9.696969 );
+            var maxBlockHeight = Math.floor( window.innerHeight / 18.945945 );
+            var blockWidth = maxBlockWidth * .9;
+            var blockHeight = maxBlockHeight * .9;
+            frame.innerHTML = getBlocks(blockWidth,blockHeight).replace(/\n/g, "<br/>");
+         }
+
+         setInterval(genFrame, 100);
+      </script>
+   </body>
+</html>
