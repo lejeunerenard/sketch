@@ -5,8 +5,8 @@ class App {
       // Canvas stuff
       this.canvas = canvas;
       this.ctx = this.canvas.getContext('2d');
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
+      this.canvas.width = 2 * ( window.innerWidth / 2 - ( ( window.innerWidth / 2) % sideLength ) );
+      this.canvas.height = 2 * ( window.innerHeight / 2 - ( ( window.innerHeight / 2 ) % sideLength ) );
       this.width = this.canvas.width;
       this.height = this.canvas.height;
 
@@ -36,11 +36,11 @@ class App {
        */
 
       window.addEventListener('resize', () => {
-         this.width = window.innerWidth;
-         this.height = window.innerHeight;
+         this.canvas.width = 2 * ( window.innerWidth / 2 - ( ( window.innerWidth / 2) % this.sideLength ) );
+         this.canvas.height = 2 * ( window.innerHeight / 2 - ( ( window.innerHeight / 2 ) % this.sideLength ) );
 
-         this.canvas.width = this.width;
-         this.canvas.height = this.height;
+         this.width = this.canvas.width;
+         this.height = this.canvas.height;
 
          this.createTriangles();
 
@@ -69,25 +69,28 @@ class App {
             let offset = this.sideLength / 2 * toggle;
             toggle = !toggle;
 
-            var color = this.linerColorInterpolation(colors[1], colors[3], triangleWidth / this.width);
-            console.log('color', color);
+            var color = this.linerColorInterpolation('472F5F', 'F3819A', triangleWidth / this.width);
 
             // Create triangle pointing right
-            this.triangles.push(new Triangle({
-               x: triangleWidth,
-               y: triangleHeight + offset,
-               sideLength: this.sideLength,
-               fillStyle: '#'+color,
-            }));
+            if ( Math.random() > 0.5 ) {
+               this.triangles.push(new Triangle({
+                  x: triangleWidth,
+                  y: triangleHeight + offset,
+                  sideLength: this.sideLength,
+                  fillStyle: '#'+color,
+               }));
+            }
 
             // Create triangle pointing left
-            this.triangles.push(new Triangle({
-               x: triangleWidth,
-               y: triangleHeight + ( this.sideLength / 2 ) + offset,
-               sideLength: this.sideLength,
-               rotate: 180,
-               fillStyle: '#'+color,
-            }));
+            if ( Math.random() > 0.5 ) {
+               this.triangles.push(new Triangle({
+                  x: triangleWidth,
+                  y: triangleHeight + ( this.sideLength / 2 ) + offset,
+                  sideLength: this.sideLength,
+                  rotate: 180,
+                  fillStyle: '#'+color,
+               }));
+            }
 
             // H = B/2
             triangleWidth += this.sideLength / 2;
@@ -130,5 +133,5 @@ class App {
    }
 }
 
-window.app = new App(document.querySelector('canvas'), 43);
+window.app = new App(document.querySelector('canvas'), 103);
 window.app.run();
