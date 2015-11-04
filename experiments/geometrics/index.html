@@ -10,12 +10,10 @@ body {
    margin: 0;
 }
 canvas {
-   width: 50%;
-   height: 50%;
    display: block;
-   margin-top: 25vh;
-      margin-left: auto;
-      margin-right: auto;
+   margin-top: 10vh;
+   margin-left: auto;
+   margin-right: auto;
 
    image-rendering: optimizeSpeed;             /* Older versions of FF          */
    image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
@@ -27,7 +25,8 @@ canvas {
       </style>
    </head>
    <body>
-      <canvas>
+      <canvas id="c1"></canvas>
+      <canvas id="c2"></canvas>
       <script src="dist/js/bundle.js"></script>
    </body>
 </html>

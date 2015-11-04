@@ -5,8 +5,8 @@ class App {
       // Canvas stuff
       this.canvas = canvas;
       this.ctx = this.canvas.getContext('2d');
-      this.canvas.width = 2 * ( window.innerWidth / 2 - ( ( window.innerWidth / 2) % sideLength ) );
-      this.canvas.height = 2 * ( window.innerHeight / 2 - ( ( window.innerHeight / 2 ) % sideLength ) );
+      this.canvas.width = ( window.innerWidth / 2 - ( ( window.innerWidth / 2) % sideLength ) );
+      this.canvas.height = ( window.innerHeight / 2 - ( ( window.innerHeight / 2 ) % sideLength ) );
       this.width = this.canvas.width;
       this.height = this.canvas.height;
 
@@ -36,8 +36,8 @@ class App {
        */
 
       window.addEventListener('resize', () => {
-         this.canvas.width = 2 * ( window.innerWidth / 2 - ( ( window.innerWidth / 2) % this.sideLength ) );
-         this.canvas.height = 2 * ( window.innerHeight / 2 - ( ( window.innerHeight / 2 ) % this.sideLength ) );
+         this.canvas.width = ( window.innerWidth / 2 - ( ( window.innerWidth / 2) % this.sideLength ) );
+         this.canvas.height = ( window.innerHeight / 2 - ( ( window.innerHeight / 2 ) % this.sideLength ) );
 
          this.width = this.canvas.width;
          this.height = this.canvas.height;
@@ -133,5 +133,7 @@ class App {
    }
 }
 
-window.app = new App(document.querySelector('canvas'), 103);
+window.app = new App(document.querySelector('#c1'), 123);
+window.app2 = new App(document.querySelector('#c2'), 123);
 window.app.run();
+window.app2.run();
