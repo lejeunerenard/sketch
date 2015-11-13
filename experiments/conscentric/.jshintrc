@@ -1,0 +1,26 @@
+{
+  "boss": true,
+  "node": true,
+  "curly": true,
+  "devel": true,
+  "eqeqeq": true,
+  "esnext": true,
+  "forin": true,
+  "globals": {
+    "document": true,
+    "global": true,
+    "requestAnimationFrame": true,
+    "window": true
+  },
+  "immed": true,
+  "newcap": true,
+  "noarg": true,
+  "noempty": true,
+  "nonew": false,
+  "plusplus": false,
+  "quotmark": "double|single",
+  "trailing": true,
+  "undef": true,
+  "unused": true,
+  "sub": true
+}
