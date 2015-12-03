@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, minimum-scale=1.0">
+      <title></title>
+      <style>
+html, body {
+   margin: 0;
+   padding: 0;
+   background: white;
+   min-height: 100%;
+   height: 100%;
+}
+canvas {
+   width: 100%;
+   height: 100%;
+   transform: translate(0);
+   /*
+    * background: #DB3255;
+    */
+   background: #fff;
+
+   image-rendering: optimizeSpeed;             /* Older versions of FF          */
+   image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+   image-rendering: -webkit-optimize-contrast; /* Safari                        */
+   image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+   image-rendering: pixelated;                 /* Awesome future-browsers       */
+   -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+}
+      </style>
+   </head>
+   <body>
+      <canvas></canvas>
+      <script src="dist/app.js"></script>
+      <script>
+         // var app = new App();
+      </script>
+   </body>
+</html>
