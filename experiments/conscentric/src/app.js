@@ -61,12 +61,14 @@ canvas.height = window.innerHeight;
 var ctx = canvas.getContext('2d');
 
 ctx.translate(canvas.width / 2, canvas.height / 2);
+ctx.rotate(Math.PI * Math.random());
 
 var audio = new window.AudioContext();
 
 var masterGain = audio.createGain();
 masterGain.connect(audio.destination);
-masterGain.gain.value = 0.0;
+masterGain.gain.value = 0.5;
+
 
 var osc = new SingleOsc({
    context: audio,
@@ -76,7 +78,7 @@ var osc = new SingleOsc({
    maxValue: 1,
 
    // Osc
-   wave: 'sine',
+   wave: 'triangle',
 });
 
 osc.connect(masterGain);
