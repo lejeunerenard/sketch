@@ -9,4 +9,5 @@ This is my sketch book on the internet.
 - [rnd-blocks](experiments/rnd-blocks/)
 - [Geometrics](experiments/geometrics/)
 - [Concentric](experiments/concentric/)
+- [Snake Squares](experiments/snake-squares/)
 
