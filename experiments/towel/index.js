@@ -2,8 +2,8 @@ import debug from 'debug'
 import Fiber from './fiber'
 import raf from 'raf'
 
-let debugFiber = debug('fiber'),
-    debugApp = debug('app')
+let debugFiber = debug('fiber')
+let debugApp = debug('app')
 
 class App {
 
@@ -30,17 +30,17 @@ class App {
 
     window.addEventListener('resize', this.resize.bind(this))
     window.addEventListener('touchstart', (event) => {
-      if ( event.target !== this.canvas ) {
+      if (event.target !== this.canvas) {
         return
       }
 
       // Double tap
-      if ( touchTimeout ) {
+      if (touchTimeout) {
         window.clearTimeout(touchTimeout)
         touchTimeout = null
 
         // Toggle GUI
-        dat.GUI.toggleHide();
+        dat.GUI.toggleHide()
       } else {
         touchTimeout = window.setTimeout(() => {
           touchTimeout = null
@@ -79,10 +79,10 @@ class App {
 
     // Add new fibers
     // Cover new height
-    if ( this.canvas.height > this.fiberHeight ) {
+    if (this.canvas.height > this.fiberHeight) {
       // Skip if there is no known width
       // This is a slight optimization
-      if ( this.fiberWidth ) {
+      if (this.fiberWidth) {
         this.createFibers({
           x: 0,
           y: this.fiberHeight
@@ -94,7 +94,7 @@ class App {
     }
 
     // Cover new width
-    if ( this.canvas.width > this.fiberWidth ) {
+    if (this.canvas.width > this.fiberWidth) {
       this.createFibers({
         x: this.fiberWidth,
         y: 0
@@ -112,14 +112,14 @@ class App {
   createFibers (offset, width, height) {
     debugApp('create fired params', offset, width, height)
 
-    let columns = width / this._density,
-        rows    = height / this._density
+    let columns = width / this._density
+    let rows = height / this._density
 
     debugApp('create fired dimensions', columns, rows)
-    for ( let i = 0; i < columns; i ++ ) {
-      for ( let j = 0; j < rows; j ++ ) {
-        let rotation = Math.random() * 2 * Math.PI,
-            length   = Math.random() * 2 + 3
+    for (let i = 0; i < columns; i++) {
+      for (let j = 0; j < rows; j++) {
+        let rotation = Math.random() * 2 * Math.PI
+        let length = Math.random() * 2 + 3
 
         this.fibers.push(new Fiber({
           rotation,
@@ -141,7 +141,7 @@ class App {
   draw () {
     let k = this.fibers.length
 
-    while ( k-- ) {
+    while (k--) {
       this.fibers[k].draw(this.ctx)
     }
 
@@ -149,5 +149,5 @@ class App {
   }
 }
 
-window.app = new App({ density: 15 })
-window.app.draw()
+let app = new App({ density: 15 })
+app.draw()

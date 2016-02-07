@@ -1,5 +1,6 @@
 'use strict'
 
+import path from 'path'
 import AppCachePlugin from 'appcache-webpack-plugin'
 
 module.exports = {
@@ -7,7 +8,7 @@ module.exports = {
     app: './index.js'
   },
   output: {
-    path: __dirname + '/dist',
+    path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
   module: {

@@ -64,8 +64,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var debugFiber = (0, _debug2.default)('fiber'),
-	    debugApp = (0, _debug2.default)('app');
+	var debugFiber = (0, _debug2.default)('fiber');
+	var debugApp = (0, _debug2.default)('app');
 
 	var App = function () {
 	  function App(options) {
@@ -170,14 +170,14 @@
 	    value: function createFibers(offset, width, height) {
 	      debugApp('create fired params', offset, width, height);
 
-	      var columns = width / this._density,
-	          rows = height / this._density;
+	      var columns = width / this._density;
+	      var rows = height / this._density;
 
 	      debugApp('create fired dimensions', columns, rows);
 	      for (var i = 0; i < columns; i++) {
 	        for (var j = 0; j < rows; j++) {
-	          var rotation = Math.random() * 2 * Math.PI,
-	              length = Math.random() * 2 + 3;
+	          var rotation = Math.random() * 2 * Math.PI;
+	          var length = Math.random() * 2 + 3;
 
 	          this.fibers.push(new _fiber2.default({
 	            rotation: rotation,
@@ -224,8 +224,8 @@
 	  return App;
 	}();
 
-	window.app = new App({ density: 15 });
-	window.app.draw();
+	var app = new App({ density: 15 });
+	app.draw();
 
 /***/ },
 /* 1 */

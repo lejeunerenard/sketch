@@ -32,6 +32,9 @@
     "webpack-dev-server": "^1.14.1"
   },
   "standard": {
+    "globals": [
+      "dat"
+    ],
     "parser": "babel-eslint"
   },
   "dependencies": {
