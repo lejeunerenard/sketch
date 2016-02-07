@@ -2,11 +2,15 @@ import debug from 'debug'
 import Fiber from './fiber'
 import raf from 'raf'
 
-let debugFiber = debug('fiber')
+let debugFiber = debug('fiber'),
+    debugApp = debug('app')
 
 class App {
 
-  constructor () {
+  constructor (options) {
+    options = options || {}
+
+    // Setup Canvas
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
     this.pixelRatio = window.devicePixelRatio || 1
@@ -14,27 +18,54 @@ class App {
 
     document.body.appendChild(this.canvas)
 
+    // Fibers
+    this.density = options.density || 10
+
     this.fibers = []
+    this.fiberWidth = 0
+    this.fiberHeight = 0
 
     // Events
     window.addEventListener('resize', this.resize.bind(this))
-    this.resize()
+    this.resize() // Resize fires initial draw too
   }
 
   resize () {
     this.canvas.width = window.innerWidth * this.pixelRatio
     this.canvas.height = window.innerHeight * this.pixelRatio
 
+    // Add new fibers
+    // Cover new height
+    if ( this.canvas.height > this.fiberHeight ) {
+      this.createFibers({
+        x: 0,
+        y: this.fiberHeight
+      }, this.fiberWidth, this.canvas.height - this.fiberHeight)
+
+      // Set new height
+      this.fiberHeight = this.canvas.height
+    }
+
+    // Cover new width
+    if ( this.canvas.width > this.fiberWidth ) {
+      this.createFibers({
+        x: this.fiberWidth,
+        y: 0
+      }, this.canvas.width - this.fiberWidth, this.fiberHeight)
+
+      // Set new height
+      this.fiberWidth = this.canvas.width
+    }
+
     // Draw frame again
     raf(this.draw.bind(this))
   }
 
-  createFibers (density) {
-    // Clear existing fibers
-    this.fibers  = []
+  createFibers (offset, width, height) {
+    debugApp('create fired params', offset, width, height)
 
-    let columns = this.canvas.width / density,
-        rows    = this.canvas.height / density
+    let columns = width / this.density,
+        rows    = height / this.density
 
     for ( let i = 0; i < columns; i ++ ) {
       for ( let j = 0; j < rows; j ++ ) {
@@ -45,8 +76,8 @@ class App {
           rotation,
           length,
           position: {
-            x: this.canvas.width * i / columns,
-            y: this.canvas.height * j / rows
+            x: offset.x + width * i / columns,
+            y: offset.y + height * j / rows
           }
         }))
 
@@ -67,7 +98,5 @@ class App {
   }
 }
 
-var app = new App
-
-app.createFibers(10)
+var app = new App({ density: 25 })
 app.draw()

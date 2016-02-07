@@ -64,12 +64,16 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var debugFiber = (0, _debug2.default)('fiber');
+	var debugFiber = (0, _debug2.default)('fiber'),
+	    debugApp = (0, _debug2.default)('app');
 
 	var App = function () {
-	  function App() {
+	  function App(options) {
 	    _classCallCheck(this, App);
 
+	    options = options || {};
+
+	    // Setup Canvas
 	    this.canvas = document.createElement('canvas');
 	    this.ctx = this.canvas.getContext('2d');
 	    this.pixelRatio = window.devicePixelRatio || 1;
@@ -77,13 +81,16 @@
 
 	    document.body.appendChild(this.canvas);
 
+	    // Fibers
+	    this.density = options.density || 10;
+
 	    this.fibers = [];
 	    this.fiberWidth = 0;
 	    this.fiberHeight = 0;
 
 	    // Events
 	    window.addEventListener('resize', this.resize.bind(this));
-	    this.resize();
+	    this.resize(); // Resize fires initial draw too
 	  }
 
 	  _createClass(App, [{
@@ -92,17 +99,39 @@
 	      this.canvas.width = window.innerWidth * this.pixelRatio;
 	      this.canvas.height = window.innerHeight * this.pixelRatio;
 
+	      // Add new fibers
+	      // Cover new height
+	      if (this.canvas.height > this.fiberHeight) {
+	        this.createFibers({
+	          x: 0,
+	          y: this.fiberHeight
+	        }, this.fiberWidth, this.canvas.height - this.fiberHeight);
+
+	        // Set new height
+	        this.fiberHeight = this.canvas.height;
+	      }
+
+	      // Cover new width
+	      if (this.canvas.width > this.fiberWidth) {
+	        this.createFibers({
+	          x: this.fiberWidth,
+	          y: 0
+	        }, this.canvas.width - this.fiberWidth, this.fiberHeight);
+
+	        // Set new height
+	        this.fiberWidth = this.canvas.width;
+	      }
+
 	      // Draw frame again
 	      (0, _raf2.default)(this.draw.bind(this));
 	    }
 	  }, {
 	    key: 'createFibers',
-	    value: function createFibers(density) {
-	      // Clear existing fibers
-	      this.fibers = [];
+	    value: function createFibers(offset, width, height) {
+	      debugApp('create fired params', offset, width, height);
 
-	      var columns = this.canvas.width / density,
-	          rows = this.canvas.height / density;
+	      var columns = width / this.density,
+	          rows = height / this.density;
 
 	      for (var i = 0; i < columns; i++) {
 	        for (var j = 0; j < rows; j++) {
@@ -113,8 +142,8 @@
 	            rotation: rotation,
 	            length: length,
 	            position: {
-	              x: this.canvas.width * i / columns,
-	              y: this.canvas.height * j / rows
+	              x: offset.x + width * i / columns,
+	              y: offset.y + height * j / rows
 	            }
 	          }));
 
@@ -139,9 +168,7 @@
 	  return App;
 	}();
 
-	var app = new App();
-
-	app.createFibers(10);
+	var app = new App({ density: 25 });
 	app.draw();
 
 /***/ },
