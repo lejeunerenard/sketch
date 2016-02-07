@@ -1,5 +1,7 @@
 'use strict'
 
+import AppCachePlugin from 'appcache-webpack-plugin'
+
 module.exports = {
   entry: {
     app: './index.js'
@@ -25,5 +27,12 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.json'],
     alias: {}
-  }
+  },
+  plugins: [
+    new AppCachePlugin({
+      network: null,
+      settings: ['prefer-online'],
+      output: 'towel.appcache'
+    })
+  ]
 }

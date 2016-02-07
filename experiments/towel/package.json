@@ -19,6 +19,7 @@
   "author": "lejeunerenard",
   "license": "MIT",
   "devDependencies": {
+    "appcache-webpack-plugin": "^1.2.1",
     "babel-core": "^6.4.5",
     "babel-eslint": "^4.1.8",
     "babel-loader": "^6.2.2",
