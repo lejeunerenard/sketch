@@ -48,11 +48,11 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _debug = __webpack_require__(2);
+	var _debug = __webpack_require__(1);
 
 	var _debug2 = _interopRequireDefault(_debug);
 
-	var _fiber = __webpack_require__(1);
+	var _fiber = __webpack_require__(4);
 
 	var _fiber2 = _interopRequireDefault(_fiber);
 
@@ -82,15 +82,18 @@
 	    document.body.appendChild(this.canvas);
 
 	    // Fibers
-	    this.density = options.density || 10;
-
 	    this.fibers = [];
 	    this.fiberWidth = 0;
 	    this.fiberHeight = 0;
 
+	    this.density = options.density || 10;
+
 	    // Events
 	    window.addEventListener('resize', this.resize.bind(this));
-	    this.resize(); // Resize fires initial draw too
+
+	    // GUI
+	    var gui = new dat.GUI();
+	    gui.add(this, 'density').min(4);
 	  }
 
 	  _createClass(App, [{
@@ -102,10 +105,14 @@
 	      // Add new fibers
 	      // Cover new height
 	      if (this.canvas.height > this.fiberHeight) {
-	        this.createFibers({
-	          x: 0,
-	          y: this.fiberHeight
-	        }, this.fiberWidth, this.canvas.height - this.fiberHeight);
+	        // Skip if there is no known width
+	        // This is a slight optimization
+	        if (this.fiberWidth) {
+	          this.createFibers({
+	            x: 0,
+	            y: this.fiberHeight
+	          }, this.fiberWidth, this.canvas.height - this.fiberHeight);
+	        }
 
 	        // Set new height
 	        this.fiberHeight = this.canvas.height;
@@ -123,6 +130,7 @@
 	      }
 
 	      // Draw frame again
+	      debugApp('draw scheduled');
 	      (0, _raf2.default)(this.draw.bind(this));
 	    }
 	  }, {
@@ -130,9 +138,10 @@
 	    value: function createFibers(offset, width, height) {
 	      debugApp('create fired params', offset, width, height);
 
-	      var columns = width / this.density,
-	          rows = height / this.density;
+	      var columns = width / this._density,
+	          rows = height / this._density;
 
+	      debugApp('create fired dimensions', columns, rows);
 	      for (var i = 0; i < columns; i++) {
 	        for (var j = 0; j < rows; j++) {
 	          var rotation = Math.random() * 2 * Math.PI,
@@ -162,64 +171,36 @@
 	      while (k--) {
 	        this.fibers[k].draw(this.ctx);
 	      }
+
+	      debugApp('drawn');
+	    }
+	  }, {
+	    key: 'density',
+	    get: function get() {
+	      return this._density;
+	    }
+
+	    // Changing density automatically redraws the entire app
+	    ,
+	    set: function set(value) {
+	      this._density = value;
+
+	      // Clear
+	      this.fibers = [];
+
+	      this.fiberWidth = this.fiberHeight = 0;
+	      this.resize();
 	    }
 	  }]);
 
 	  return App;
 	}();
 
-	var app = new App({ density: 25 });
-	app.draw();
+	window.app = new App({ density: 15 });
+	window.app.draw();
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Fiber = function () {
-	  function Fiber(options) {
-	    _classCallCheck(this, Fiber);
-
-	    options = options || {};
-
-	    this.length = options.length || 1;
-	    this.position = options.position || { x: 0, y: 0 };
-	    this.rotation = options.rotation || 0;
-
-	    this.color = options.color || '#000';
-	  }
-
-	  _createClass(Fiber, [{
-	    key: 'update',
-	    value: function update() {}
-	  }, {
-	    key: 'draw',
-	    value: function draw(ctx) {
-	      ctx.beginPath();
-	      ctx.moveTo(this.position.x, this.position.y);
-	      ctx.lineTo(this.position.x + Math.cos(this.rotation) * this.length, this.position.y + Math.sin(this.rotation) * this.length);
-
-	      ctx.strokeStyle = this.color;
-	      ctx.stroke();
-	    }
-	  }]);
-
-	  return Fiber;
-	}();
-
-	exports.default = Fiber;
-
-/***/ },
-/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -229,7 +210,7 @@
 	 * Expose `debug()` as the module.
 	 */
 
-	exports = module.exports = __webpack_require__(3);
+	exports = module.exports = __webpack_require__(2);
 	exports.log = log;
 	exports.formatArgs = formatArgs;
 	exports.save = save;
@@ -393,7 +374,7 @@
 
 
 /***/ },
-/* 3 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -409,7 +390,7 @@
 	exports.disable = disable;
 	exports.enable = enable;
 	exports.enabled = enabled;
-	exports.humanize = __webpack_require__(4);
+	exports.humanize = __webpack_require__(3);
 
 	/**
 	 * The currently active debug mode names, and names to skip.
@@ -596,7 +577,7 @@
 
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports) {
 
 	/**
@@ -725,6 +706,53 @@
 	  return Math.ceil(ms / n) + ' ' + name + 's';
 	}
 
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Fiber = function () {
+	  function Fiber(options) {
+	    _classCallCheck(this, Fiber);
+
+	    options = options || {};
+
+	    this.length = options.length || 1;
+	    this.position = options.position || { x: 0, y: 0 };
+	    this.rotation = options.rotation || 0;
+
+	    this.color = options.color || '#000';
+	  }
+
+	  _createClass(Fiber, [{
+	    key: 'update',
+	    value: function update() {}
+	  }, {
+	    key: 'draw',
+	    value: function draw(ctx) {
+	      ctx.beginPath();
+	      ctx.moveTo(this.position.x, this.position.y);
+	      ctx.lineTo(this.position.x + Math.cos(this.rotation) * this.length, this.position.y + Math.sin(this.rotation) * this.length);
+
+	      ctx.strokeStyle = this.color;
+	      ctx.stroke();
+	    }
+	  }]);
+
+	  return Fiber;
+	}();
+
+	exports.default = Fiber;
 
 /***/ },
 /* 5 */

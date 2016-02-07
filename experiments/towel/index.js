@@ -19,15 +19,33 @@ class App {
     document.body.appendChild(this.canvas)
 
     // Fibers
-    this.density = options.density || 10
-
     this.fibers = []
     this.fiberWidth = 0
     this.fiberHeight = 0
 
+    this.density = options.density || 10
+
     // Events
     window.addEventListener('resize', this.resize.bind(this))
-    this.resize() // Resize fires initial draw too
+
+    // GUI
+    var gui = new dat.GUI()
+    gui.add(this, 'density').min(4)
+  }
+
+  get density () {
+    return this._density
+  }
+
+  // Changing density automatically redraws the entire app
+  set density (value) {
+    this._density = value
+
+    // Clear
+    this.fibers = []
+
+    this.fiberWidth = this.fiberHeight = 0
+    this.resize()
   }
 
   resize () {
@@ -37,10 +55,14 @@ class App {
     // Add new fibers
     // Cover new height
     if ( this.canvas.height > this.fiberHeight ) {
-      this.createFibers({
-        x: 0,
-        y: this.fiberHeight
-      }, this.fiberWidth, this.canvas.height - this.fiberHeight)
+      // Skip if there is no known width
+      // This is a slight optimization
+      if ( this.fiberWidth ) {
+        this.createFibers({
+          x: 0,
+          y: this.fiberHeight
+        }, this.fiberWidth, this.canvas.height - this.fiberHeight)
+      }
 
       // Set new height
       this.fiberHeight = this.canvas.height
@@ -58,15 +80,17 @@ class App {
     }
 
     // Draw frame again
+    debugApp('draw scheduled')
     raf(this.draw.bind(this))
   }
 
   createFibers (offset, width, height) {
     debugApp('create fired params', offset, width, height)
 
-    let columns = width / this.density,
-        rows    = height / this.density
+    let columns = width / this._density,
+        rows    = height / this._density
 
+    debugApp('create fired dimensions', columns, rows)
     for ( let i = 0; i < columns; i ++ ) {
       for ( let j = 0; j < rows; j ++ ) {
         let rotation = Math.random() * 2 * Math.PI,
@@ -95,8 +119,10 @@ class App {
     while ( k-- ) {
       this.fibers[k].draw(this.ctx)
     }
+
+    debugApp('drawn')
   }
 }
 
-var app = new App({ density: 25 })
-app.draw()
+window.app = new App({ density: 15 })
+window.app.draw()
