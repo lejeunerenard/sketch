@@ -29,9 +29,12 @@ class App {
     raf(this.draw.bind(this))
   }
 
-  createFibers (columns, rows) {
+  createFibers (density) {
     // Clear existing fibers
     this.fibers  = []
+
+    let columns = this.canvas.width / density,
+        rows    = this.canvas.height / density
 
     for ( let i = 0; i < columns; i ++ ) {
       for ( let j = 0; j < rows; j ++ ) {
@@ -66,5 +69,5 @@ class App {
 
 var app = new App
 
-app.createFibers(400,180)
+app.createFibers(10)
 app.draw()

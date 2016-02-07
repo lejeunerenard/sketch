@@ -78,6 +78,8 @@
 	    document.body.appendChild(this.canvas);
 
 	    this.fibers = [];
+	    this.fiberWidth = 0;
+	    this.fiberHeight = 0;
 
 	    // Events
 	    window.addEventListener('resize', this.resize.bind(this));
@@ -95,9 +97,12 @@
 	    }
 	  }, {
 	    key: 'createFibers',
-	    value: function createFibers(columns, rows) {
+	    value: function createFibers(density) {
 	      // Clear existing fibers
 	      this.fibers = [];
+
+	      var columns = this.canvas.width / density,
+	          rows = this.canvas.height / density;
 
 	      for (var i = 0; i < columns; i++) {
 	        for (var j = 0; j < rows; j++) {
@@ -136,7 +141,7 @@
 
 	var app = new App();
 
-	app.createFibers(400, 180);
+	app.createFibers(10);
 	app.draw();
 
 /***/ },
