@@ -10,4 +10,5 @@ This is my sketch book on the internet.
 - [Geometrics](experiments/geometrics/)
 - [Concentric](experiments/concentric/)
 - [Snake Squares](experiments/snake-squares/)
+- [towel](experiments/towel/)
 
