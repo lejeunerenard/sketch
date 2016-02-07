@@ -69,6 +69,8 @@
 
 	var App = function () {
 	  function App(options) {
+	    var _this = this;
+
 	    _classCallCheck(this, App);
 
 	    options = options || {};
@@ -89,7 +91,29 @@
 	    this.density = options.density || 10;
 
 	    // Events
+	    var touchTimeout = undefined;
+
 	    window.addEventListener('resize', this.resize.bind(this));
+	    window.addEventListener('touchstart', function (event) {
+	      if (event.target !== _this.canvas) {
+	        return;
+	      }
+
+	      // Double tap
+	      if (touchTimeout) {
+	        window.clearTimeout(touchTimeout);
+	        touchTimeout = null;
+
+	        // Toggle GUI
+	        dat.GUI.toggleHide();
+	      } else {
+	        touchTimeout = window.setTimeout(function () {
+	          touchTimeout = null;
+
+	          _this.clear();
+	        }, 500);
+	      }
+	    });
 
 	    // GUI
 	    var gui = new dat.GUI();
@@ -97,6 +121,14 @@
 	  }
 
 	  _createClass(App, [{
+	    key: 'clear',
+	    value: function clear() {
+	      this.fibers = [];
+
+	      this.fiberWidth = this.fiberHeight = 0;
+	      this.resize();
+	    }
+	  }, {
 	    key: 'resize',
 	    value: function resize() {
 	      this.canvas.width = window.innerWidth * this.pixelRatio;
@@ -185,11 +217,7 @@
 	    set: function set(value) {
 	      this._density = value;
 
-	      // Clear
-	      this.fibers = [];
-
-	      this.fiberWidth = this.fiberHeight = 0;
-	      this.resize();
+	      this.clear();
 	    }
 	  }]);
 

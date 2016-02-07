@@ -26,7 +26,29 @@ class App {
     this.density = options.density || 10
 
     // Events
+    let touchTimeout
+
     window.addEventListener('resize', this.resize.bind(this))
+    window.addEventListener('touchstart', (event) => {
+      if ( event.target !== this.canvas ) {
+        return
+      }
+
+      // Double tap
+      if ( touchTimeout ) {
+        window.clearTimeout(touchTimeout)
+        touchTimeout = null
+
+        // Toggle GUI
+        dat.GUI.toggleHide();
+      } else {
+        touchTimeout = window.setTimeout(() => {
+          touchTimeout = null
+
+          this.clear()
+        }, 500)
+      }
+    })
 
     // GUI
     var gui = new dat.GUI()
@@ -41,7 +63,10 @@ class App {
   set density (value) {
     this._density = value
 
-    // Clear
+    this.clear()
+  }
+
+  clear () {
     this.fibers = []
 
     this.fiberWidth = this.fiberHeight = 0
