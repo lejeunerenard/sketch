@@ -1,0 +1,40 @@
+{
+  "name": "towel",
+  "version": "1.0.0",
+  "description": "A bunch of little lines",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard --verbose | snazzy",
+    "start": "npm run build",
+    "dev": "python -mSimpleHTTPServer & npm run build:watch",
+    "build": "webpack",
+    "build:watch": "webpack --watch"
+  },
+  "keywords": [
+    "canvas",
+    "art",
+    "towel"
+  ],
+  "author": "lejeunerenard",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.4.5",
+    "babel-eslint": "^4.1.8",
+    "babel-loader": "^6.2.2",
+    "babel-preset-es2015": "^6.3.13",
+    "css-loader": "^0.23.1",
+    "snazzy": "^2.0.1",
+    "standard": "^6.0.1",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.13",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "raf": "^3.1.0"
+  }
+}
