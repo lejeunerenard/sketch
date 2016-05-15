@@ -15,8 +15,8 @@ export default class App {
 
     // Create nodes
     let nodes = []
-    let numNodes = 9
-    let radius = 100
+    let numNodes = 50
+    let radius = 125
     for (let i = 0; i < numNodes; i++) {
       let angle = i * 2 * Math.PI / numNodes
       nodes.push(new Node(

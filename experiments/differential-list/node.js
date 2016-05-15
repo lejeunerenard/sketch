@@ -6,7 +6,8 @@ export default class Node {
     let nodes = []
     let mass = 1000
     let velocity = new Vec2(0, 0)
-    let radius = 20
+    let radius = 2
+
     let spawnRate = Math.random() * 2 * 1000 + 1000
     let food = 0
 
