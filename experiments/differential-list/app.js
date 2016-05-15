@@ -59,7 +59,7 @@ export default class App {
 
   update (dt) {
     for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].update(dt)
+      this.nodes[i].update(dt, this)
     }
   }
 
