@@ -1,6 +1,7 @@
 import createContex from '2d-context'
 import createLoop from 'canvas-loop'
 import assign from 'object-assign'
+import Vec2 from 'vec2'
 
 import Node from './node'
 
@@ -18,9 +19,10 @@ export default class App {
     let radius = 100
     for (let i = 0; i < numNodes; i++) {
       let angle = i * 2 * Math.PI / numNodes
-      nodes.push(new Node({
-        x: radius * Math.cos(angle),
-        y: radius * Math.sin(angle)}))
+      nodes.push(new Node(
+        new Vec2(
+          radius * Math.cos(angle),
+          radius * Math.sin(angle))))
     }
 
     // Connect them

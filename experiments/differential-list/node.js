@@ -32,31 +32,15 @@ export default class Node {
 
   update (dt) {
     let { position, nodes, radius, mass, velocity } = this
-
-    let posVec2 = new Vec2(position.x, position.y)
     let accel = new Vec2(0, 0)
 
     nodes.forEach((node) => {
-      let displacement = posVec2.clone().subtract(node.position.x, node.position.y)
-      let dispMagSqr = displacement.lengthSquared()
-
-      // let minDis = 5
-      // let pushK = 9
-      // let push = displacement.clone()
-      //   .normalize()
-      //   .multiply(pushK * 1 / Math.max(displacement.length() - minDis, 0.0001))
-
-      // let force = push.clone().divide(mass)
-      // accel.add(force)
-
-      // let pushK = 9
-      // let push = displacement.clone().multiply(pushK)
-      // accel.add(push.clone().divide(mass))
+      let displacement = position.clone().subtract(node.position.x, node.position.y)
 
       let pushK = 90
       let push = displacement.clone()
         .normalize()
-        .multiply(pushK * Math.max(100 - displacement.length(), 0))
+        .multiply(pushK * Math.max(radius * 10 - displacement.length(), 0))
       accel.add(push.clone().divide(mass))
 
       let pullK = 9
@@ -69,14 +53,14 @@ export default class Node {
     })
 
     // Centering
-    // velocity.add(posVec2.clone().multiply(-0.001))
+    // velocity.add(position.clone().multiply(-0.001))
 
     // Dampinging
     velocity.multiply(0.99)
 
-    posVec2.add(velocity.clone().multiply(dt / 1000))
+    position.add(velocity.clone().multiply(dt / 1000))
 
-    this.position = posVec2.toJSON()
+    this.position = position
   }
 
   render (ctx) {
