@@ -18,13 +18,14 @@
     "budo": "",
     "installify": "",
     "snazzy": "^4.0.0",
-    "standard": ""
+    "standard": "",
+    "uglify-js": "^2.6.2"
   },
   "scripts": {
     "test": "npm run lint",
     "lint": "standard | snazzy",
     "dev": "budo index.js:bundle.js --live --open",
-    "build:prod": "browserify index.js -t -o bundle.js"
+    "build:prod": "browserify index.js | uglifyjs -cm > bundle.js"
   },
   "keywords": [
     "3d",
