@@ -1,0 +1,48 @@
+{
+  "name": "obscured-objects",
+  "version": "1.0.0",
+  "description": "A threejs experiment",
+  "main": "index.js",
+  "dependencies": {
+    "canvas-fit-loop": "^1.0.3",
+    "object-assign": "",
+    "three": "",
+    "three-orbit-controls": "^72.0.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "",
+    "babelify": "",
+    "browserify": "",
+    "budo": "",
+    "installify": "",
+    "standard": ""
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard | snazzy",
+    "dev": "budo index.js:bundle.js --live --open",
+    "build:prod": "browserify . -o bundle.js"
+  },
+  "keywords": [
+    "3d",
+    "experiment"
+  ],
+  "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      "babelify",
+      [
+        "installify",
+        {
+          "save": true
+        }
+      ]
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  }
+}
