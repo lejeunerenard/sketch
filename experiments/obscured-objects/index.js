@@ -6,7 +6,7 @@ import App from './app'
 
 let app = new App()
 
-let capture = (localStorage.capture !== 'false')
+let capture = (localStorage.capture !== 'false' && localStorage.capture)
 let captureLength = defined(localStorage.captureLength || 10)
 
 if (capture) {
