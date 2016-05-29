@@ -4,7 +4,11 @@
   "description": "A threejs experiment",
   "main": "index.js",
   "dependencies": {
+    "assign": "^0.1.7",
+    "canvas-fit": "^1.5.0",
     "canvas-fit-loop": "^1.0.3",
+    "ccapture.js": "^1.0.3",
+    "defined": "^1.0.0",
     "object-assign": "",
     "three": "",
     "three-orbit-controls": "^72.0.0"
@@ -43,6 +47,11 @@
   "babel": {
     "presets": [
       "es2015"
+    ]
+  },
+  "standard": {
+    "globals": [
+      "localStorage"
     ]
   }
 }

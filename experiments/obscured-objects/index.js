@@ -1,75 +1,53 @@
-import THREE from 'three'
-import makeOrbitControls from 'three-orbit-controls'
 import createLoop from 'canvas-fit-loop'
+import fitter from 'canvas-fit'
+import CCapture from 'ccapture.js'
+import defined from 'defined'
+import App from './app'
 
-const magenta = 0xf321b0
-const orange = 0xf39821
+let app = new App()
 
-const OrbitControls = makeOrbitControls(THREE)
+let capture = (localStorage.capture !== 'false')
+let captureLength = defined(localStorage.captureLength || 10)
 
-const renderer = new THREE.WebGLRenderer({ antialias: true })
-renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setClearColor(magenta)
+if (capture) {
+  fitter(app.canvas)
 
-const canvas = renderer.domElement
-document.body.appendChild(canvas)
+  let capturer
+  capturer = new CCapture({ format: 'jpg', framerate: 30, verbose: true })
+  capturer.start()
 
-// Init
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000)
-camera.position.set(0, 6, 10)
-camera.lookAt(new THREE.Vector3(0, 0, 0))
+  let frames = 0
 
-let controls = new OrbitControls(camera, canvas)
-controls.update()
+  // Helpers
+  function render (dt) {
+    requestAnimationFrame(render)
 
-const scene = new THREE.Scene()
+    app.update(dt)
+    app.render()
 
-let sphereGeo = new THREE.SphereBufferGeometry(5, 64, 64)
-let sphereMat = new THREE.MeshLambertMaterial({ color: magenta })
-let sphere = new THREE.Mesh(sphereGeo, sphereMat)
-sphere.position.set(0, 0, 0)
-scene.add(sphere)
+    if (frames <= captureLength * 30) {
+      // capturer.capture(app.canvas)
+      frames++
+    } else {
+      capturer.stop()
+      capturer.save()
+    }
+  }
 
-// Lighting
-let ambient = new THREE.AmbientLight(orange)
-ambient.intensity = 0.85
-scene.add(ambient)
+  app.resize()
+  render()
+} else {
+  const loop = createLoop(app.canvas, {
+    scale: window.devicePixelRatio
+  })
 
-let white = new THREE.AmbientLight(0xffffff)
-white.intensity = 0.85
-scene.add(white)
+  loop.on('resize', () => { app.resize(loop.shape[0], loop.shape[1]) })
+  loop.emit('resize')
 
-let keyPoint = new THREE.PointLight(0xffffff, 1, 100)
-keyPoint.intensity = 0.65
-keyPoint.position.set(20, 20, 5)
-scene.add(keyPoint)
+  loop.on('tick', (dt) => {
+    app.update(dt)
+    app.render()
+  })
 
-const app = createLoop(canvas, {
-  scale: window.devicePixelRatio
-})
-
-function resize () {
-  let [width, height] = app.shape
-
-  renderer.setSize(width, height)
-
-  camera.aspect = width / height
-  camera.updateProjectionMatrix()
+  loop.start()
 }
-
-function tick (dt) {
-  scene.rotation.y -= 1 * dt / 1000
-  scene.rotation.z -= 1 * dt / 1000
-  renderer.render(scene, camera)
-}
-
-const app = createLoop(canvas, {
-  scale: window.devicePixelRatio
-})
-
-app.on('resize', resize)
-app.emit('resize')
-
-app.on('tick', tick)
-
-app.start()
