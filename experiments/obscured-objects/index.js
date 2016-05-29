@@ -21,7 +21,7 @@ if (capture) {
   let dt = 1 / framerate * 1000
 
   // Helpers
-  function render () {
+  let render = function render () {
     requestAnimationFrame(render)
 
     app.update(dt)

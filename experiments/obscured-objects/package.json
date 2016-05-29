@@ -4,14 +4,12 @@
   "description": "A threejs experiment",
   "main": "index.js",
   "dependencies": {
-    "assign": "^0.1.7",
     "canvas-fit": "^1.5.0",
     "canvas-fit-loop": "^1.0.3",
     "ccapture.js": "^1.0.3",
     "defined": "^1.0.0",
     "object-assign": "",
-    "three": "",
-    "three-orbit-controls": "^72.0.0"
+    "three": ""
   },
   "devDependencies": {
     "babel-preset-es2015": "",
@@ -19,13 +17,14 @@
     "browserify": "",
     "budo": "",
     "installify": "",
+    "snazzy": "^4.0.0",
     "standard": ""
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run lint",
     "lint": "standard | snazzy",
     "dev": "budo index.js:bundle.js --live --open",
-    "build:prod": "browserify . -o bundle.js"
+    "build:prod": "browserify index.js -t -o bundle.js"
   },
   "keywords": [
     "3d",
