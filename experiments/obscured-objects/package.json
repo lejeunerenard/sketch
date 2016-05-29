@@ -25,7 +25,9 @@
     "test": "npm run lint",
     "lint": "standard | snazzy",
     "dev": "budo index.js:bundle.js --live --open",
-    "build:prod": "browserify index.js | uglifyjs -cm > bundle.js"
+    "build:prod": "npm run build:bundle & npm run build:capture",
+    "build:bundle": "browserify index.js | uglifyjs -cm > bundle.js",
+    "build:capture": "browserify capture.js | uglifyjs -cm > bundle.capture.js"
   },
   "keywords": [
     "3d",
