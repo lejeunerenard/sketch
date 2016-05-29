@@ -11,4 +11,5 @@ This is my sketch book on the internet.
 - [Concentric](experiments/concentric/)
 - [Snake Squares](experiments/snake-squares/)
 - [towel](experiments/towel/)
+- [Obscured Object](experiments/obscured-objects/)
 
