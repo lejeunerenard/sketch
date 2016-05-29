@@ -1,0 +1,58 @@
+{
+  "name": "obscured-objects",
+  "version": "1.0.0",
+  "description": "A threejs experiment",
+  "main": "index.js",
+  "dependencies": {
+    "canvas-fit": "^1.5.0",
+    "canvas-fit-loop": "^1.0.3",
+    "ccapture.js": "^1.0.3",
+    "defined": "^1.0.0",
+    "object-assign": "",
+    "three": ""
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "",
+    "babelify": "",
+    "browserify": "",
+    "budo": "",
+    "installify": "",
+    "snazzy": "^4.0.0",
+    "standard": "",
+    "uglify-js": "^2.6.2"
+  },
+  "scripts": {
+    "test": "npm run lint",
+    "lint": "standard | snazzy",
+    "dev": "budo index.js:bundle.js --live --open",
+    "build:prod": "browserify index.js | uglifyjs -cm > bundle.js"
+  },
+  "keywords": [
+    "3d",
+    "experiment"
+  ],
+  "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      "babelify",
+      [
+        "installify",
+        {
+          "save": true
+        }
+      ]
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "standard": {
+    "globals": [
+      "localStorage",
+      "requestAnimationFrame"
+    ]
+  }
+}
