@@ -51,7 +51,8 @@
   },
   "standard": {
     "globals": [
-      "localStorage"
+      "localStorage",
+      "requestAnimationFrame"
     ]
   }
 }

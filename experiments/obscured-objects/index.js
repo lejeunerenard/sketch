@@ -13,20 +13,22 @@ if (capture) {
   fitter(app.canvas)
 
   let capturer
-  capturer = new CCapture({ format: 'jpg', framerate: 30, verbose: true })
+  let framerate = 30
+  capturer = new CCapture({ format: 'jpg', framerate, verbose: true })
   capturer.start()
 
   let frames = 0
+  let dt = 1 / framerate * 1000
 
   // Helpers
-  function render (dt) {
+  function render () {
     requestAnimationFrame(render)
 
     app.update(dt)
     app.render()
 
     if (frames <= captureLength * 30) {
-      // capturer.capture(app.canvas)
+      capturer.capture(app.canvas)
       frames++
     } else {
       capturer.stop()
