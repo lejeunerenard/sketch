@@ -48,18 +48,28 @@ const app = createLoop(canvas, {
   scale: window.devicePixelRatio
 })
 
-app.on('resize', () => {
+function resize () {
   let [width, height] = app.shape
 
   renderer.setSize(width, height)
 
   camera.aspect = width / height
   camera.updateProjectionMatrix()
+}
+
+function tick (dt) {
+  scene.rotation.y -= 1 * dt / 1000
+  scene.rotation.z -= 1 * dt / 1000
+  renderer.render(scene, camera)
+}
+
+const app = createLoop(canvas, {
+  scale: window.devicePixelRatio
 })
+
+app.on('resize', resize)
 app.emit('resize')
 
-app.on('tick', (dt) => {
-  renderer.render(scene, camera)
-})
+app.on('tick', tick)
 
 app.start()
