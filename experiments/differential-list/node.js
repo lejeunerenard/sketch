@@ -55,6 +55,7 @@ export default class Node {
     this.disconnect(other)
     other.disconnect(this)
 
+    // TODO refactor out componentwise
     let displacement = new Vec2(other.position.x, other.position.y)
       .subtract(position)
 
@@ -77,28 +78,40 @@ export default class Node {
     }
 
     // Motion
-    let accel = new Vec2(0, 0)
+    let force = new Vec2(0, 0)
 
     nodes.forEach((node) => {
+      // TODO refactor out componentwise
       let displacement = position.clone().subtract(node.position.x, node.position.y)
 
       let pushK = 90
       let push = displacement.clone()
         .normalize()
         .multiply(pushK * Math.max(radius * 10 - displacement.length(), 0))
-      accel.add(push.clone().divide(mass))
+      force.add(push)
 
       let pullK = 9
       let pull = displacement.clone()
         .normalize()
         .multiply(-pullK * displacement.length())
-      accel.add(pull.clone().divide(mass))
-
-      velocity.add(accel.clone().multiply(dt / 1000))
+      force.add(pull)
     })
+
+    // Hinge
+    let connect1 = this.nodes[0].position.clone().subtract(position)
+    let connect2 = this.nodes[1].position.clone().subtract(position)
+    let angle = Math.abs(connect1.angleTo(connect2))
+    let delta = this.nodes[1].position.clone().subtract(this.nodes[0].position).divide(2)
+    const idealAngle = 3 * Math.PI / 4
+    let correctionAmount = 10 * Math.abs(idealAngle - angle) / idealAngle
+    let hingeForce = delta.subtract(position).normalize().multiply(correctionAmount)
+    force.add(hingeForce)
+    // console.log('angle', angle)
 
     // Centering
     // velocity.add(position.clone().multiply(-0.001))
+    // Acceleration
+    velocity.add(force.divide(mass).multiply(dt / 1000))
 
     // Dampinging
     velocity.multiply(0.99)
