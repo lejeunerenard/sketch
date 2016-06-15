@@ -94,9 +94,13 @@ function draw () {
       ctx.rotate(Math.PI / 2)
       ctx.translate(- currentWidth / 2, - currentHeight / 2)
     } else if (c === 'H') {
+      ctx.translate(currentWidth / 2, currentHeight / 2)
       ctx.scale(-1, 1)
+      ctx.translate(- currentWidth / 2, - currentHeight / 2)
     } else if (c === 'V') {
+      ctx.translate(currentWidth / 2, currentHeight / 2)
       ctx.scale(1, -1)
+      ctx.translate(- currentWidth / 2, - currentHeight / 2)
     } else if (c === 'l') {
       ctx.translate(- currentWidth / 2, 0)
     } else if (c === 'L') {
