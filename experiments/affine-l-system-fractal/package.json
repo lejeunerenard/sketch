@@ -1,0 +1,44 @@
+{
+  "name": "affine-l-system-fractal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "2d-context": "^1.3.0",
+    "babel-preset-es2016": "^6.0.11",
+    "babelify": "^7.3.0",
+    "budo": "^8.3.0",
+    "canvas-loop": "^1.0.7",
+    "standard": "^7.1.2"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-es2016": "^6.0.11",
+    "babelify": "^7.3.0",
+    "budo": "^8.3.0",
+    "installify": "^1.0.2",
+    "standard": "^7.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "budo index.js:bundle.js --live --open"
+  },
+  "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      "babelify",
+      [
+        "installify",
+        {
+          "save": true
+        }
+      ]
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  }
+}
