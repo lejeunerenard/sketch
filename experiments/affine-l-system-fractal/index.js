@@ -31,7 +31,7 @@ const app = makeLoop(canvas, {
 // [ = Save state
 // ] = Restore state
 
-let phrase = 'S[oI]R[I]D[HoI]L[I]'
+let phrase = 'S[SoI]R[VI]D[HoI]L[oooI]'
 
 let vocab = {
   'I': phrase
@@ -56,6 +56,8 @@ for (let i = 0; i < num; i++) {
   generate()
 }
 
+console.log('done generating')
+
 function download () {
   let link = document.createElement('a')
   link.href = canvas.toDataURL()
@@ -68,10 +70,11 @@ function draw () {
   let currentWidth = canvas.width
   let currentHeight = canvas.height
 
-  ctx.fillStyle = '#343434'
+  ctx.fillStyle = '#222'
 
   ctx.save()
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = 'rgba(168, 168, 168, 0.8)'
 
   if (DEBUG) {
     ctx.moveTo(currentWidth / 2, 0)
@@ -125,6 +128,8 @@ function draw () {
   }
 
   ctx.restore()
+
+  console.log('drawn')
 }
 
 app.on('tick', (dt) => {
