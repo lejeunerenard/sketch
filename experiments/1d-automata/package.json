@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "budo index.js:bundle.js --live --open"
+    "dev": "budo index.js:bundle.js --live --open",
+    "build": "browserify index.js | uglifyjs -m -c warnings=false > bundle.js"
   },
   "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
   "license": "MIT",
@@ -15,7 +16,8 @@
     "budo": "^8.3.0",
     "installify": "^1.0.2",
     "snazzy": "^4.0.0",
-    "standard": "^7.1.2"
+    "standard": "^7.1.2",
+    "uglify-js": "^2.6.2"
   },
   "browserify": {
     "transform": [
