@@ -8,7 +8,7 @@ const canvas = ctx.canvas
 
 document.body.appendChild(canvas)
 
-const dpr = window.devicePixelRatio / 2
+const dpr = window.devicePixelRatio
 const app = makeLoop(canvas, {
   scale: dpr
 })
@@ -64,7 +64,6 @@ function mixColor (percentage) {
 }
 
 function draw () {
-  // ctx.fillStyle = `hsl(${percentageThrough() * 360 / 6}, 100%, 50%)`
   ctx.fillStyle = mixColor(percentageThrough())
 
   for (let i = 0; i < state.length && i < app.width; i++) {
@@ -104,10 +103,8 @@ app.on('resize', () => {
 })
 
 app.on('tick', (dt) => {
-  if (gen > 605) {
-  // if (gen > 639 || gen > (app.height * (1 - 2 * offset))) {
+  if (gen > (app.height * (1 - offset))) {
     console.log('stopped')
-    console.log('gen', gen)
     app.stop()
   }
   nextGen()
