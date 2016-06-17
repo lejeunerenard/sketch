@@ -1,4 +1,4 @@
-![screenshot](./screenshot.jpg)
+<img src="./screenshot.jpg" style="width: 100%" alt="screenshot">
 
 # 1D Automata
 
