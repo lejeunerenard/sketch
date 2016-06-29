@@ -2,11 +2,12 @@ import Quad from 'simple-quadtree'
 import makeCtx from '2d-context'
 import makeLoop from 'canvas-loop'
 import assign from 'object-assign'
+import defined from 'defined'
 
 import Circle from './circle'
 
 export default class App {
-  constructor () {
+  constructor (opt = {}) {
     const ctx = makeCtx()
     const canvas = ctx.canvas
 
@@ -19,7 +20,7 @@ export default class App {
 
     // Populate
     let total = 7
-    let maxGen = 45
+    let maxGen = defined(opt.nGen, 45)
     let startR = 20
 
     loop.on('resize', this.resize.bind(this))
