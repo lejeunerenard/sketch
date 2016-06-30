@@ -13,4 +13,5 @@ This is my sketch book on the internet.
 - [towel](experiments/towel/)
 - [Obscured Object](experiments/obscured-objects/)
 - [1D Automata](experiments/1d-automata/)
+- [Circle Packing](experiments/circle-packing/)
 
