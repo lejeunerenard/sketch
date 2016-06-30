@@ -82,8 +82,6 @@ export default class App {
   }
 
   setup () {
-    let { width, height } = this
-
     this.objs = {}
     this.quad.clear()
     this.gen = 1
