@@ -6,13 +6,15 @@ import defined from 'defined'
 
 import Circle from './circle'
 
+const dpr = window.devicePixelRatio
+
 export default class App {
   constructor (opt = {}) {
     const ctx = makeCtx()
     const canvas = ctx.canvas
 
     const loop = makeLoop(canvas, {
-      scale: window.devicePixelRatio
+      scale: dpr
     })
     let [width, height] = loop.shape
 
@@ -137,11 +139,18 @@ export default class App {
   render () {
     let { ctx, width, height, objs } = this
 
+    ctx.save()
+
+    // Adjust for device pixel ratio
+    ctx.scale(dpr, dpr)
+
     ctx.fillStyle = '#222'
     ctx.fillRect(0, 0, width, height)
 
     Object.keys(objs).map((key) => objs[key]).forEach((obj) => {
       obj.render(ctx)
     })
+
+    ctx.restore()
   }
 }
