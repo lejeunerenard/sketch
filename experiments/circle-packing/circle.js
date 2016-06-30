@@ -54,8 +54,9 @@ export default class Circle {
     return `hsl(${gen % 360}, 100%, 50%)`
   }
 
-  modGrey (gen) {
-    return `hsl(0, 0%, ${gen % 100}%)`
+  modGrey (gen, offset = 0) {
+    let range = 100 - offset
+    return `hsl(0, 0%, ${(gen % range) + offset}%)`
   }
 
   spawn (other, quad, gen, opposite = false) {
@@ -95,7 +96,7 @@ export default class Circle {
     let childX = b * Math.cos(newAngle) + this.pos.x
     let childY = b * Math.sin(newAngle) + this.pos.y
 
-    let color = this.modGrey(gen * 5)
+    let color = this.modGrey(gen * 5, 15)
 
     let child = new Circle(childX, childY, childR, color)
 
