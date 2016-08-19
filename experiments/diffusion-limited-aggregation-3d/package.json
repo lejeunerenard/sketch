@@ -1,0 +1,61 @@
+{
+  "name": "diffusion-limited-aggregation-3d",
+  "version": "1.0.0",
+  "description": "Diffusion-Limited Aggregation in 3D",
+  "main": "index.js",
+  "dependencies": {
+    "canvas-fit-loop": "^1.0.3",
+    "object-assign": "",
+    "three": "",
+    "three-orbit-controls": "^72.0.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "",
+    "babelify": "",
+    "browserify": "",
+    "budo": "",
+    "eslint": "^3.3.1",
+    "eslint-config-standard": "^5.3.5",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0",
+    "installify": "",
+    "standard": ""
+  },
+  "scripts": {
+    "test": "npm run lint",
+    "lint": "eslint **/*.js | snazzy",
+    "dev": "budo index.js:bundle.js --live --open",
+    "build:prod": "browserify . -o bundle.js"
+  },
+  "keywords": [
+    "3d",
+    "experiment",
+    "diffusion-limited",
+    "aggregation",
+    "generative",
+    "threejs"
+  ],
+  "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      "babelify",
+      [
+        "installify",
+        {
+          "save": true
+        }
+      ]
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "globals": {
+    }
+  }
+}
