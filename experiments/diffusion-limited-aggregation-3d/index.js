@@ -2,7 +2,6 @@ import THREE from 'three'
 import makeOrbitalControls from 'three-orbit-controls'
 import createLoop from 'canvas-fit-loop'
 
-import { randomVec } from './utils'
 import makeOctree from './octree'
 makeOctree(THREE)
 
@@ -57,8 +56,32 @@ let walkers = []
 const numWalkers = 500
 function makeWalker () {
   let walker = new Walker(1, 0xffff00)
-  let vec = randomVec().multiplyScalar(walkerWidth)
-  walker.position.copy(vec)
+
+  let side = Math.floor(Math.random() * 6)
+  let rand1 = (Math.random() * 2 - 1) * walkerWidth
+  let rand2 = (Math.random() * 2 - 1) * walkerWidth
+
+  switch (side) {
+    case 0:
+      walker.position.set(-walkerWidth, rand1, rand2)
+      break
+    case 1:
+      walker.position.set(walkerWidth, rand1, rand2)
+      break
+    case 2:
+      walker.position.set(rand1, -walkerWidth, rand2)
+      break
+    case 3:
+      walker.position.set(rand1, walkerWidth, rand2)
+      break
+    case 4:
+      walker.position.set(rand1, rand2, -walkerWidth)
+      break
+    case 5:
+      walker.position.set(rand1, rand2, walkerWidth)
+      break
+  }
+
   walker.visible = false
 
   scene.add(walker)
