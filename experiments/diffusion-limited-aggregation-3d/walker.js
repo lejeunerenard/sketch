@@ -22,9 +22,10 @@ export default class Walker extends THREE.Mesh {
   }
 
   doesCollide (tree) {
-    for (let other of tree) {
-      let d = other.position.distanceToSquared(this.position)
-      if (d < (other.radius + this.radius) * (other.radius + this.radius)) {
+    let matches = tree.search(this.position, this.radius * 2)
+    for (let { object } of matches) {
+      let d = object.position.distanceToSquared(this.position)
+      if (d < (object.radius + this.radius) * (object.radius + this.radius)) {
         return true
       }
     }
