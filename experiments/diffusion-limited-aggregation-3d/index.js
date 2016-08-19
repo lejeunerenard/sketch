@@ -36,13 +36,13 @@ camera.position.set(2, 2, 5).multiplyScalar(20)
 scene.add(camera)
 
 const controls = new Controls(camera, canvas)
-controls
+controls.autoRotate = true
 
 const point = new THREE.PointLight(0xffffff, 1, 500)
 point.position.set(walkerWidth, walkerWidth, walkerWidth)
 scene.add(point)
 
-const ambient = new THREE.AmbientLight(0xffffff, 0.1)
+const ambient = new THREE.AmbientLight(0xffffff, 0.4)
 scene.add(ambient)
 
 // Setup tree
@@ -106,7 +106,7 @@ app.on('resize', () => {
 
 const huePeriod = 2
 app.on('tick', (dt) => {
-  let n = 50
+  let n = 10
   while (n--) {
     for (let i = walkers.length - 1; i >= 0; i--) {
       let walker = walkers[i]
@@ -129,6 +129,7 @@ app.on('tick', (dt) => {
     walkers.push(makeWalker())
   }
 
+  controls.update()
   renderer.render(scene, camera)
   tree.update()
 })
