@@ -104,6 +104,7 @@ app.on('resize', () => {
   camera.updateProjectionMatrix()
 })
 
+const huePeriod = 2
 app.on('tick', (dt) => {
   let n = 50
   while (n--) {
@@ -112,7 +113,11 @@ app.on('tick', (dt) => {
       walker.walk(edges)
 
       if (walker.doesCollide(tree)) {
-        walker.color = 0xcccccc
+        let hue = root.position.distanceToSquared(walker.position) /
+          (3 * walkerWidth * walkerWidth) * 360 *
+          huePeriod %
+          360
+        walker.color = `hsl(${hue}, 60%, 50%)`
         walker.visible = true
         tree.add(walker)
         walkers.splice(i, 1)
