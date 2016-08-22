@@ -1,6 +1,6 @@
 <img src="./screenshot.png" style="width: 100%" alt="screenshot">
 
-# 3D Diffused-Limited Aggregation
+# 3D Diffusion-Limited Aggregation
 
 This is a 3D simulation of Diffusion-Limited Aggregation or DLA. What is DLA, you ask? Let's see [wikipedia](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation) says:
 
@@ -12,7 +12,7 @@ This simulation confines itself to a cube shaped area and terminates once the tr
 
 ## Usage
 
-[Go here](http://lejeunerenard.github.io/sketch/experiments/1d-automata/) and enjoy.
+[Go here](http://lejeunerenard.github.io/sketch/experiments/diffusion-limited-aggregation-3d/) and enjoy.
 
 ## Install
 
