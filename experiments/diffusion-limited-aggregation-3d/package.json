@@ -19,13 +19,15 @@
     "eslint-plugin-promise": "^2.0.1",
     "eslint-plugin-standard": "^2.0.0",
     "installify": "",
-    "standard": ""
+    "snazzy": "^4.0.1",
+    "standard": "",
+    "uglify-js": "^2.7.3"
   },
   "scripts": {
     "test": "npm run lint",
     "lint": "eslint **/*.js | snazzy",
     "dev": "budo index.js:bundle.js --live --open",
-    "build:prod": "browserify . -o bundle.js"
+    "build:prod": "browserify . | uglifyjs -cm > bundle.js"
   },
   "keywords": [
     "3d",
@@ -54,8 +56,6 @@
     ]
   },
   "eslintConfig": {
-    "extends": "standard",
-    "globals": {
-    }
+    "extends": "standard"
   }
 }
