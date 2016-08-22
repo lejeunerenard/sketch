@@ -7,6 +7,8 @@ makeOctree(THREE)
 
 import Walker from './walker'
 
+const MAX_TREE = 1200
+
 const Controls = makeOrbitalControls(THREE)
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -106,27 +108,31 @@ app.on('resize', () => {
 
 const huePeriod = 2
 app.on('tick', (dt) => {
-  let n = 10
-  while (n--) {
-    for (let i = walkers.length - 1; i >= 0; i--) {
-      let walker = walkers[i]
-      walker.walk(edges)
+  if (tree.getObjectCountEnd() < MAX_TREE) {
+    let n = 10
+    while (n--) {
+      for (let i = walkers.length - 1; i >= 0; i--) {
+        let walker = walkers[i]
+        walker.walk(edges)
 
-      if (walker.doesCollide(tree)) {
-        let hue = root.position.distanceToSquared(walker.position) /
-          (3 * walkerWidth * walkerWidth) * 360 *
-          huePeriod %
+        if (walker.doesCollide(tree)) {
+          let hue = root.position.distanceToSquared(walker.position) /
+            (3 * walkerWidth * walkerWidth) * 360 *
+            huePeriod %
           360
-        walker.color = `hsl(${hue}, 60%, 50%)`
-        walker.visible = true
-        tree.add(walker)
-        walkers.splice(i, 1)
+          walker.color = `hsl(${hue}, 60%, 50%)`
+          walker.visible = true
+          tree.add(walker)
+          walkers.splice(i, 1)
+        }
       }
     }
-  }
 
-  while (walkers.length < numWalkers) {
-    walkers.push(makeWalker())
+    while (walkers.length < numWalkers) {
+      walkers.push(makeWalker())
+    }
+  } else {
+    console.log('done')
   }
 
   controls.update()
