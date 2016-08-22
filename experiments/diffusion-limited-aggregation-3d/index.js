@@ -13,16 +13,10 @@ const Controls = makeOrbitalControls(THREE)
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.setClearColor(0x111111)
 
 const canvas = renderer.domElement
 document.body.appendChild(canvas)
-
-let numOfWalkers = document.createElement('div')
-numOfWalkers.style.position = 'absolute'
-numOfWalkers.style.left = '10px'
-numOfWalkers.style.top = '10px'
-numOfWalkers.style.color = '#fff'
-document.body.appendChild(numOfWalkers)
 
 const walkerWidth = 30
 const edges = [
@@ -140,4 +134,5 @@ app.on('tick', (dt) => {
   tree.update()
 })
 
+app.emit('resize')
 app.start()
