@@ -1,7 +1,7 @@
 const dpr = window.devicePixelRatio
 
 const pW = 0.5
-const scale = 1 / 12
+const GLOBAL_SCALE = 1 / 12
 
 export default class App {
   constructor (rules) {
@@ -38,13 +38,14 @@ export default class App {
 
   render (dt, ctx) {
     let { point, width, height } = this
+    let scale = Math.min(width, height) * GLOBAL_SCALE
 
     ctx.save()
 
     ctx.scale(dpr, dpr)
     ctx.translate(width / 2, height)
 
-    ctx.fillRect(point.x * width * scale, -point.y * height * scale, pW, pW)
+    ctx.fillRect(point.x * scale, -point.y * scale, pW, pW)
 
     ctx.restore()
   }
