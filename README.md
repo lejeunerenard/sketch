@@ -15,4 +15,5 @@ This is my sketch book on the internet.
 - [1D Automata](experiments/1d-automata/)
 - [Circle Packing](experiments/circle-packing/)
 - [Diffusion-Limited Aggregation](./experiments/diffusion-limited-aggregation-3d/)
+- [Barnsley Fern](./experiments/barnsley-fern/)
 
