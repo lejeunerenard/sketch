@@ -16,4 +16,5 @@ This is my sketch book on the internet.
 - [Circle Packing](experiments/circle-packing/)
 - [Diffusion-Limited Aggregation](./experiments/diffusion-limited-aggregation-3d/)
 - [Barnsley Fern](./experiments/barnsley-fern/)
+- [Penrose Zoom](./experiments/penrose-zoom/)
 
