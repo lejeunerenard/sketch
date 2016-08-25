@@ -45,5 +45,16 @@
     "presets": [
       "es2015"
     ]
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "globals": {
+      "imgDir": false,
+      "Image": false,
+      "SoundBank": false,
+      "Typekit": false,
+      "WebFont": false,
+      "XMLHttpRequest": false
+    }
   }
 }

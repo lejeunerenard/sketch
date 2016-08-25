@@ -6,7 +6,7 @@ const ctx = makeContext()
 const canvas = ctx.canvas
 document.body.appendChild(canvas)
 
-const app = new App
+const app = new App()
 
 const loop = makeLoop(canvas, { scale: window.devicePixelRatio })
 loop.on('resize', app.resize.bind(app, loop.shape))

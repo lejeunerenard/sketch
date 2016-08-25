@@ -7,7 +7,7 @@ const twoSixteen = 216 * Math.PI / 180
 
 export default class App {
   constructor () {
-    let portion =  2 * Math.PI / 5
+    let portion = 2 * Math.PI / 5
     this.tiles = [
       new Kite(0, 0, 0 * portion, 1400),
       new Kite(0, 0, 1 * portion, 1400),
