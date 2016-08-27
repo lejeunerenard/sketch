@@ -1,3 +1,5 @@
+import TWEEN from 'tween.js'
+
 import Kite from './kite'
 import Dart from './dart'
 
@@ -5,28 +7,160 @@ const dpr = window.devicePixelRatio
 const seventyTwo = 72 * Math.PI / 180
 const twoSixteen = 216 * Math.PI / 180
 
+const totalTime = 3000
+const step1Dur = totalTime / 3
+const step2Dur = totalTime / 3
+const step3Dur = totalTime / 3
+
+const step1Ease = TWEEN.Easing.Sinusoidal.Out
+const step2Ease = TWEEN.Easing.Circular.InOut
+const step3Ease = TWEEN.Easing.Exponential.InOut
+
+const initialGeneration = 2
+const maxGenerations = 2
+
+let time = null
+let generation = 0
 export default class App {
   constructor () {
     let portion = 2 * Math.PI / 5
+    let size = 1400
     this.tiles = [
-      new Kite(0, 0, 0 * portion, 1400),
-      new Kite(0, 0, 1 * portion, 1400),
-      new Kite(0, 0, 2 * portion, 1400),
-      new Kite(0, 0, 3 * portion, 1400),
-      new Kite(0, 0, 4 * portion, 1400)
+      new Kite(0, 0, 0 * portion, size, null, '#000'),
+      new Kite(0, 0, 1 * portion, size, null, '#000'),
+      new Kite(0, 0, 2 * portion, size, null, '#000'),
+      new Kite(0, 0, 3 * portion, size, null, '#000'),
+      new Kite(0, 0, 4 * portion, size, null, '#000')
     ]
 
     // Generation
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < initialGeneration; i++) {
       this.nextGeneration()
     }
+
+    generation = maxGenerations - 1
+
+    let nextAnimation = (currentTiles) => {
+      let complete
+
+      // Swap
+      [this.movingTiles, complete] = this.animate(currentTiles)
+      return complete.then(() => {
+        if (!generation) {
+          return
+        }
+        generation--
+
+        this.tiles = this.movingTiles
+        return nextAnimation(this.movingTiles)
+      })
+    }
+
+    nextAnimation(this.tiles).then(() => { console.log('time', time) })
+  }
+
+  scaleThenMove (from, to) {
+    let genesis = JSON.parse(JSON.stringify(from))
+    genesis.side = genesis._side
+
+    let dest = {
+      side: to.side,
+      x: to.x,
+      y: to.y,
+      rotation: to.rotation
+    }
+
+    to.x = from.x
+    to.y = from.y
+    to.rotation = from.rotation
+    to.side = from.side
+
+    let scale = new TWEEN.Tween(genesis)
+      .to({
+        side: dest.side
+      }, step1Dur)
+      .easing(step1Ease)
+      .onUpdate(function () {
+        to.side = this.side
+      })
+
+    let posNRot = new TWEEN.Tween(genesis)
+      .to({
+        rotation: dest.rotation,
+        x: dest.x,
+        y: dest.y
+      }, step2Dur)
+      .easing(step2Ease)
+      .onUpdate(function () {
+        to.x = this.x
+        to.y = this.y
+        to.rotation = this.rotation
+      })
+
+    return scale.chain(posNRot).start()
+  }
+
+  waitThenScale (from, to) {
+    let genesis = { side: from.side }
+    let dest = to.side
+    genesis.side = 0
+    to.side = 0
+
+    return new TWEEN.Tween(genesis)
+      .to({
+        side: dest
+      }, step3Dur)
+      .delay(step1Dur + step2Dur)
+      .easing(step3Ease)
+      .onUpdate(function () {
+        to.side = this.side
+      }).start()
+  }
+
+  animate (tiles) {
+    let pendingCompletion = []
+    let moving = tiles.reduce((prev, parent) => {
+      let nextSet = this.deflation(parent)
+
+      let setComplete = new Promise((resolve, reject) => {
+        let stillWaiting = nextSet.length
+        function isComplete () {
+          stillWaiting--
+          if (!stillWaiting) {
+            resolve()
+          }
+        }
+
+        let tweens = []
+        if (parent instanceof Kite) {
+          tweens.push(this.scaleThenMove(parent, nextSet[0]))
+          tweens.push(this.waitThenScale(parent, nextSet[1]))
+          tweens.push(this.waitThenScale(parent, nextSet[2]))
+        } else {
+          tweens.push(this.scaleThenMove(parent, nextSet[1]))
+          tweens.push(this.waitThenScale(parent, nextSet[0]))
+        }
+
+        tweens.forEach((tween) => {
+          tween.onComplete(isComplete)
+        })
+      })
+
+      pendingCompletion.push(setComplete)
+
+      return prev.concat(nextSet)
+    }, [])
+
+    return [moving, Promise.all(pendingCompletion)]
   }
 
   resize (shape) {
     [this.width, this.height] = shape
   }
 
-  tick () {
+  tick (dt) {
+    time += dt
+    TWEEN.update(time)
   }
 
   nextGeneration () {
@@ -55,7 +189,7 @@ export default class App {
   }
 
   render (dt, ctx) {
-    let { width, height, tiles } = this
+    let { width, height } = this
 
     ctx.save()
 
@@ -65,7 +199,7 @@ export default class App {
     ctx.scale(dpr, dpr)
     ctx.translate(width / 2, height / 2)
 
-    tiles.forEach((tile) => {
+    this.movingTiles.forEach((tile) => {
       tile.draw(ctx)
     })
 
