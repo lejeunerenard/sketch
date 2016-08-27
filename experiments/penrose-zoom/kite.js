@@ -4,21 +4,31 @@ const seventyTwo = 72 * Math.PI / 180
 
 export default class Kite {
   constructor (x = 0, y = 0, rotation = 0, side = 100, color = 'rgb(255,114,96)', stroke = '#fff') {
-    let sideA = side
-    let sideB = sideA * Math.sin(seventyTwo / 2) / Math.sin(seventyTwo)
-    let sideC = Math.sqrt(sideA * sideA + sideB * sideB - 2 * sideA * sideB * Math.cos(seventyTwo))
-
     assign(this, {
       x,
       y,
       color,
       stroke,
       rotation,
-      side,
+      side
+    })
+  }
+
+  set side (value) {
+    let sideA = value
+    let sideB = sideA * Math.sin(seventyTwo / 2) / Math.sin(seventyTwo)
+    let sideC = Math.sqrt(sideA * sideA + sideB * sideB - 2 * sideA * sideB * Math.cos(seventyTwo))
+
+    assign(this, {
       sideA,
       sideB,
-      sideC
+      sideC,
+      _side: value
     })
+  }
+
+  get side () {
+    return this._side
   }
 
   get vertexA () {
