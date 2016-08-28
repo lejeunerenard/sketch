@@ -31,6 +31,20 @@ For simplicity sake, I am using the P2 tiling which consists of a kite (Fig 1.) 
 
 [Go here](http://lejeunerenard.github.io/sketch/experiments/penrose-zoom/) and enjoy.
 
+### Capture
+
+To capture an 8 second clip of the animation, type the following in your browser console and refresh:
+
+```javascript
+localStorage.capture = true
+```
+
+To disable, just set it to a falsy value:
+
+```javascript
+localStorage.capture = false
+```
+
 ## Install
 
 ```bash

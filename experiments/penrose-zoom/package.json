@@ -15,6 +15,7 @@
   "dependencies": {
     "2d-context": "^1.3.0",
     "canvas-loop": "^1.0.7",
+    "ccapture.js": "^1.0.3",
     "debug": "^2.2.0",
     "lerp": "^1.0.3",
     "object-assign": "^4.1.0",
@@ -52,12 +53,8 @@
   "eslintConfig": {
     "extends": "standard",
     "globals": {
-      "imgDir": false,
-      "Image": false,
-      "SoundBank": false,
-      "Typekit": false,
-      "WebFont": false,
-      "XMLHttpRequest": false
+      "localStorage": false,
+      "requestAnimationFrame": false
     }
   }
 }
