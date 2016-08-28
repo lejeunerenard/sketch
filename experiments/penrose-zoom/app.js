@@ -1,6 +1,11 @@
 import TWEEN from 'tween.js'
 import lerp from 'lerp'
-import lerp from 'lerp'
+import debug from 'debug'
+
+const d = {
+  sides: debug('penrose:sides'),
+  animation: debug('penrose:animation')
+}
 
 import Kite from './kite'
 import Dart from './dart'
@@ -29,6 +34,8 @@ const ENDSCALE = Math.pow(1.6180339887498947, maxGenerations)
 let time = 0
 let startTime
 let generation = 0
+let startSide = 0
+
 export default class App {
   constructor () {
     this.tiles = [
@@ -44,7 +51,16 @@ export default class App {
       this.nextGeneration()
     }
 
-    generation = maxGenerations - 1
+    let first
+    for (let tile of this.tiles) {
+      if (tile instanceof Kite) {
+        first = tile
+        break
+      }
+    }
+
+    startSide = first.side
+    d.sides('start side length', startSide)
 
     let nextAnimation = (currentTiles) => {
       let complete
@@ -62,7 +78,19 @@ export default class App {
       })
     }
 
-    nextAnimation(this.tiles).then(() => { console.log('time', time) })
+    nextAnimation(this.tiles).then(() => {
+      d.animation('time', time)
+      d.animation('delta time ', time - startTime)
+      let last
+      for (let tile of this.tiles) {
+        if (tile instanceof Kite) {
+          last = tile
+          break
+        }
+      }
+
+      d.sides('ending side length', last.side)
+    })
   }
 
   scaleThenMove (from, to, start) {
