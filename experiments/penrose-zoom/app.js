@@ -1,4 +1,6 @@
 import TWEEN from 'tween.js'
+import lerp from 'lerp'
+import lerp from 'lerp'
 
 import Kite from './kite'
 import Dart from './dart'
@@ -8,6 +10,7 @@ const seventyTwo = 72 * Math.PI / 180
 const twoSixteen = 216 * Math.PI / 180
 const PORTION = 2 * Math.PI / 5
 
+const START_OFFSET = 500
 const totalTime = 3000
 const step1Dur = totalTime / 3
 const step2Dur = totalTime / 3
@@ -17,11 +20,14 @@ const step1Ease = TWEEN.Easing.Sinusoidal.Out
 const step2Ease = TWEEN.Easing.Circular.InOut
 const step3Ease = TWEEN.Easing.Exponential.InOut
 
-const initialGeneration = 2
+const initialGeneration = 4
 const maxGenerations = 2
 
 const SIZE = 1400
-let time = null
+const ENDSCALE = Math.pow(1.6180339887498947, maxGenerations)
+
+let time = 0
+let startTime
 let generation = 0
 export default class App {
   constructor () {
@@ -46,10 +52,10 @@ export default class App {
       // Swap
       [this.movingTiles, complete] = this.animate(currentTiles)
       return complete.then(() => {
-        if (!generation) {
+        if (generation >= maxGenerations - 1) {
           return
         }
-        generation--
+        generation++
 
         this.tiles = this.movingTiles
         return nextAnimation(this.movingTiles)
@@ -59,7 +65,7 @@ export default class App {
     nextAnimation(this.tiles).then(() => { console.log('time', time) })
   }
 
-  scaleThenMove (from, to) {
+  scaleThenMove (from, to, start) {
     let genesis = JSON.parse(JSON.stringify(from))
     genesis.side = genesis._side
 
@@ -97,10 +103,10 @@ export default class App {
         to.rotation = this.rotation
       })
 
-    return scale.chain(posNRot).start()
+    return scale.chain(posNRot).start(start)
   }
 
-  waitThenScale (from, to) {
+  waitThenScale (from, to, start) {
     let genesis = { side: from.side }
     let dest = to.side
     genesis.side = 0
@@ -114,7 +120,7 @@ export default class App {
       .easing(step3Ease)
       .onUpdate(function () {
         to.side = this.side
-      }).start()
+      }).start(start)
   }
 
   animate (tiles) {
@@ -131,14 +137,20 @@ export default class App {
           }
         }
 
+        if (startTime === undefined) {
+          startTime = time + START_OFFSET
+        }
+
+        let singleStartTime = startTime + totalTime * generation
+
         let tweens = []
         if (parent instanceof Kite) {
-          tweens.push(this.scaleThenMove(parent, nextSet[0]))
-          tweens.push(this.waitThenScale(parent, nextSet[1]))
-          tweens.push(this.waitThenScale(parent, nextSet[2]))
+          tweens.push(this.scaleThenMove(parent, nextSet[0], singleStartTime))
+          tweens.push(this.waitThenScale(parent, nextSet[1], singleStartTime))
+          tweens.push(this.waitThenScale(parent, nextSet[2], singleStartTime))
         } else {
-          tweens.push(this.scaleThenMove(parent, nextSet[1]))
-          tweens.push(this.waitThenScale(parent, nextSet[0]))
+          tweens.push(this.scaleThenMove(parent, nextSet[1], singleStartTime))
+          tweens.push(this.waitThenScale(parent, nextSet[0], singleStartTime))
         }
 
         tweens.forEach((tween) => {
@@ -189,17 +201,27 @@ export default class App {
   }
 
   render (dt, ctx) {
-    let { width, height } = this
+    let { width, height, movingTiles } = this
 
     ctx.save()
+
+    ctx.scale(dpr, dpr)
 
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, width, height)
 
-    ctx.scale(dpr, dpr)
     ctx.translate(width / 2, height / 2)
 
-    this.movingTiles.forEach((tile) => {
+    let relativeTime = Math.min(1, (time - startTime) / (maxGenerations * totalTime))
+    relativeTime = Math.max(0, relativeTime)
+
+    let scale = lerp(1, ENDSCALE, relativeTime)
+    ctx.scale(scale, scale)
+
+    let rotation = lerp(0, PORTION / 2, relativeTime)
+    ctx.rotate(rotation, rotation)
+
+    movingTiles.forEach((tile) => {
       tile.draw(ctx)
     })
 
