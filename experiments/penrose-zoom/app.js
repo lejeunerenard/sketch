@@ -6,6 +6,7 @@ import Dart from './dart'
 const dpr = window.devicePixelRatio
 const seventyTwo = 72 * Math.PI / 180
 const twoSixteen = 216 * Math.PI / 180
+const PORTION = 2 * Math.PI / 5
 
 const totalTime = 3000
 const step1Dur = totalTime / 3
@@ -19,18 +20,17 @@ const step3Ease = TWEEN.Easing.Exponential.InOut
 const initialGeneration = 2
 const maxGenerations = 2
 
+const SIZE = 1400
 let time = null
 let generation = 0
 export default class App {
   constructor () {
-    let portion = 2 * Math.PI / 5
-    let size = 1400
     this.tiles = [
-      new Kite(0, 0, 0 * portion, size, null, '#000'),
-      new Kite(0, 0, 1 * portion, size, null, '#000'),
-      new Kite(0, 0, 2 * portion, size, null, '#000'),
-      new Kite(0, 0, 3 * portion, size, null, '#000'),
-      new Kite(0, 0, 4 * portion, size, null, '#000')
+      new Kite(0, 0, 0 * PORTION, SIZE),
+      new Kite(0, 0, 1 * PORTION, SIZE),
+      new Kite(0, 0, 2 * PORTION, SIZE),
+      new Kite(0, 0, 3 * PORTION, SIZE),
+      new Kite(0, 0, 4 * PORTION, SIZE)
     ]
 
     // Generation
