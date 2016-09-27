@@ -17,4 +17,5 @@ This is my sketch book on the internet.
 - [Diffusion-Limited Aggregation](./experiments/diffusion-limited-aggregation-3d/)
 - [Barnsley Fern](./experiments/barnsley-fern/)
 - [Penrose Zoom](./experiments/penrose-zoom/)
+- [Hilbert Curve](./experiments/hilbert-curve/)
 
