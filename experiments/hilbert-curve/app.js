@@ -1,9 +1,9 @@
 let width, height
-const margin = 10
+const margin = 64
 
 export default class App {
   constructor () {
-    this.color = '#111'
+    this.color = '#000'
     this.curve = 'A'
     // Source:
     // https://en.wikipedia.org/wiki/Hilbert_curve#Representation_as_Lindenmayer_system
@@ -117,7 +117,7 @@ export default class App {
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, width, height)
 
-    ctx.strokeStyle = '#000'
+    ctx.strokeStyle = this.color
     ctx.translate(0, height)
 
     if (width > height) {
