@@ -1,4 +1,4 @@
-import makeLoop from 'canvas-loop'
+import Voyeur from '@lejeunerenard/voyeur'
 import makeCtx from '2d-context'
 
 import App from './app'
@@ -11,15 +11,14 @@ const ctx = makeCtx({ scale: dpr })
 const canvas = ctx.canvas
 document.body.appendChild(canvas)
 
-const loop = makeLoop(canvas)
-loop
-  .on('tick', (dt) => {
-    app.update(dt)
-    app.render(ctx)
-  })
-  .on('resize', () => {
-    app.resize(...loop.shape)
-  })
-  .emit('resize')
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+app.resize(canvas.width, canvas.height)
 
-loop.start()
+let voyeur = new Voyeur(canvas, 28, {
+  framerate: 60
+})
+voyeur.capture = !!(JSON.parse(window.localStorage.capture || 'false'))
+voyeur.update = app.update.bind(app)
+voyeur.render = app.render.bind(app, ctx)
+voyeur.start()
