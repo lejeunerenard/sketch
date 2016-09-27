@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "budo . --live --open",
+    "build": "browserify index.js | uglifyjs -cm > bundle.js",
+    "start": "budo index.js:bundle.js --live --open",
     "test": "eslint **/*.js"
   },
   "keywords": [],
