@@ -110,7 +110,6 @@ export default class Node {
     let correctionAmount = 10 * Math.abs(idealAngle - angle) / idealAngle
     let hingeForce = delta.subtract(position).normalize().multiply(correctionAmount)
     force.add(hingeForce)
-    // console.log('angle', angle)
 
     // Centering
     velocity.add(position.clone().multiply(-0.001))
