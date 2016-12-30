@@ -80,20 +80,24 @@ export default class Node {
     // Motion
     let force = new Vec2(0, 0)
 
-    nodes.forEach((node) => {
-      // TODO refactor out componentwise
-      let displacement = position.clone().subtract(node.position.x, node.position.y)
+    // All others
+    app.nodes.filter((other) => other !== this).forEach((subNode) => {
+      let subdisplacement = position.clone().subtract(subNode.position)
 
-      let pushK = 90
-      let push = displacement.clone()
+      let pushK = 9000
+      let push = subdisplacement.clone()
         .normalize()
-        .multiply(pushK * Math.max(radius * 10 - displacement.length(), 0))
+        .multiply(pushK * Math.max(radius / subdisplacement.lengthSquared(), 0))
       force.add(push)
+    })
+
+    nodes.forEach((node) => {
+      let displacement = position.clone().subtract(node.position)
 
       let pullK = 9
       let pull = displacement.clone()
         .normalize()
-        .multiply(-pullK * displacement.length())
+        .multiply(-pullK * displacement.lengthSquared())
       force.add(pull)
     })
 
