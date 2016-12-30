@@ -76,11 +76,32 @@ export default class App {
 
     ctx.translate(width / 2, height / 2)
 
-    for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].render(ctx)
+
+    ctx.beginPath()
+    let firstNode = this.nodes[0] 
+    ctx.moveTo(firstNode.position.x, firstNode.position.y)
+    let currentNode = this.nextNode(firstNode, firstNode)
+    let prevNode = firstNode
+    while (currentNode !== firstNode) {
+      ctx.lineTo(currentNode.position.x, currentNode.position.y)
+      let tmp = currentNode
+      currentNode = this.nextNode(prevNode, currentNode)
+      prevNode = tmp
     }
+    ctx.closePath()
+    ctx.fill()
+    ctx.stroke()
 
     ctx.restore()
+  }
+
+  nextNode (prev, node) {
+    for (let i = 0; i < node.nodes.length; i++) {
+      let other = node.nodes[i]
+      if (other !== prev) {
+        return other
+      }
+    }
   }
 
   start () {
