@@ -113,7 +113,8 @@ export default class Node {
     // console.log('angle', angle)
 
     // Centering
-    // velocity.add(position.clone().multiply(-0.001))
+    velocity.add(position.clone().multiply(-0.001))
+
     // Acceleration
     velocity.add(force.divide(mass).multiply(dt / 1000))
 
