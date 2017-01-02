@@ -8,7 +8,7 @@ export default class Node {
     let velocity = new Vec2(0, 0)
     let radius = 2
 
-    let spawnRate = Math.random() * 2 * 1000 + 1000
+    let spawnRate = 0.5 * (Math.random() * 2 * 1000 + 1000)
     let food = 0
 
     assign(this, {
@@ -98,7 +98,7 @@ export default class Node {
     others.filter((other) => other !== this).forEach((subNode) => {
       let subdisplacement = position.clone().subtract(subNode.position)
 
-      let pushK = 9000
+      let pushK = 900000
       let push = subdisplacement.clone()
         .normalize()
         .multiply(pushK * Math.max(radius / subdisplacement.lengthSquared(), 0))
@@ -108,7 +108,7 @@ export default class Node {
     nodes.forEach((node) => {
       let displacement = position.clone().subtract(node.position)
 
-      let pullK = 9
+      let pullK = 90
       let pull = displacement.clone()
         .normalize()
         .multiply(-pullK * displacement.lengthSquared())
