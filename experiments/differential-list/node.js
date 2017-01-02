@@ -1,17 +1,24 @@
 import assign from 'object-assign'
-import Vec2 from 'vec2'
+import { vec2 } from 'gl-matrix'
+
+let force = vec2.create()
+let scrap = vec2.create()
+let count = 0
 
 export default class Node {
   constructor (position) {
     let nodes = []
     let mass = 1000
-    let velocity = new Vec2(0, 0)
+    let velocity = vec2.create()
     let radius = 2
 
     let spawnRate = 0.5 * (Math.random() * 2 * 1000 + 1000)
     let food = 0
+    let id = count
+    count++
 
     assign(this, {
+      id,
       nodes,
       food,
       spawnRate,
@@ -23,11 +30,11 @@ export default class Node {
   }
 
   get x () {
-    return this.position.x
+    return this.position[0]
   }
 
   get y () {
-    return this.position.y
+    return this.position[1]
   }
 
   connect (other) {
@@ -64,12 +71,11 @@ export default class Node {
     other.disconnect(this)
 
     // TODO refactor out componentwise
-    let displacement = new Vec2(other.position.x, other.position.y)
-      .subtract(position)
+    let displacement = vec2.subtract(scrap, other.position, position)
 
-    let halfway = displacement.clone().divide(2).add(position)
+    let halfway = vec2.scaleAndAdd(scrap, position, displacement, .5)
 
-    let newBorn = new Node(halfway)
+    let newBorn = new Node(vec2.clone(halfway))
     newBorn.connect(this)
     newBorn.connect(other)
 
@@ -77,7 +83,8 @@ export default class Node {
   }
 
   update (dt, app) {
-    let { position, nodes, radius, mass, velocity, spawnRate } = this
+    let { position, nodes, radius, velocity, spawnRate } = this
+    const dtMS = dt / 1000
 
     // Food / Spawn
     this.food++
@@ -86,63 +93,76 @@ export default class Node {
     }
 
     // Motion
-    let force = new Vec2(0, 0)
+    vec2.set(force, 0, 0)
 
     // All others
-    const searchWidth = 50
-    let others = app.searchQt(
-      position.x - searchWidth,
-      position.y - searchWidth,
-      position.x + searchWidth,
-      position.y + searchWidth)
-    others.filter((other) => other !== this).forEach((subNode) => {
-      let subdisplacement = position.clone().subtract(subNode.position)
+    let displacement = scrap
+    let norm = vec2.create()
+    const searchWidth = 25
+    const pushK = 90000
+    const pullK = 9
 
-      let pushK = 900000
-      let push = subdisplacement.clone()
-        .normalize()
-        .multiply(pushK * Math.max(radius / subdisplacement.lengthSquared(), 0))
-      force.add(push)
+    let others = app.searchQt(
+      this.x - searchWidth,
+      this.y - searchWidth,
+      this.x + searchWidth,
+      this.y + searchWidth)
+
+    others.filter((other) => other !== this).forEach((subNode) => {
+      vec2.subtract(displacement, position, subNode.position)
+      vec2.normalize(norm, displacement)
+
+      let mag = pushK * Math.max(radius / vec2.squaredLength(displacement), 0)
+      // force += displacement * mag
+      vec2.scaleAndAdd(force, force, norm, mag)
     })
 
     nodes.forEach((node) => {
-      let displacement = position.clone().subtract(node.position)
+      vec2.subtract(displacement, position, node.position)
+      vec2.normalize(norm, displacement)
 
-      let pullK = 90
-      let pull = displacement.clone()
-        .normalize()
-        .multiply(-pullK * displacement.lengthSquared())
-      force.add(pull)
+      let mag = -pullK * vec2.squaredLength(displacement)
+      // force += displacement * mag
+      vec2.scaleAndAdd(force, force, norm, mag)
     })
 
     // Hinge
-    let connect1 = this.nodes[0].position.clone().subtract(position)
-    let connect2 = this.nodes[1].position.clone().subtract(position)
-    let angle = Math.abs(connect1.angleTo(connect2))
-    let delta = this.nodes[1].position.clone().subtract(this.nodes[0].position).divide(2)
+    let connect1 = vec2.subtract(vec2.create(), this.nodes[0].position, position)
+    let connect2 = vec2.subtract(vec2.create(), this.nodes[1].position, position)
+    let angle = Math.abs(
+      Math.acos(
+        vec2.dot(connect1, connect2) /
+        (vec2.length(connect1) * vec2.length(connect2))
+      ))
+
+    let delta = vec2.scale(scrap,
+      vec2.subtract(scrap, this.nodes[1].position, this.nodes[0].position),
+      0.5)
+
     const idealAngle = 3 * Math.PI / 4
     let correctionAmount = 10 * Math.abs(idealAngle - angle) / idealAngle
-    let hingeForce = delta.subtract(position).normalize().multiply(correctionAmount)
-    force.add(hingeForce)
+    vec2.subtract(delta, delta, position)
+    let hingeForce = vec2.normalize(delta, delta)
+
+    // force += hingeForce * correctionAmount
+    vec2.scaleAndAdd(force, force, hingeForce, correctionAmount)
 
     // Centering
-    velocity.add(position.clone().multiply(-0.001))
+    vec2.scaleAndAdd(velocity, velocity, position, -0.0001)
 
     // Acceleration
-    velocity.add(force.divide(mass).multiply(dt / 1000))
+    vec2.scaleAndAdd(velocity, velocity, force, dtMS / this.mass)
 
     // Dampinging
-    velocity.multiply(0.99)
+    vec2.scale(velocity, velocity, 0.99)
 
-    position.add(velocity.clone().multiply(dt / 1000))
-
-    this.position = position
+    vec2.scaleAndAdd(position, position, velocity, dtMS)
   }
 
   render (ctx) {
-    let { position, radius } = this
+    let { radius } = this
     ctx.beginPath()
-    ctx.arc(position.x, position.y, radius, 0, 2 * Math.PI)
+    ctx.arc(this.x, this.y, radius, 0, 2 * Math.PI)
     ctx.closePath()
     ctx.fillStyle = '#000'
     ctx.fill()
@@ -152,8 +172,8 @@ export default class Node {
       let node = this.nodes[i]
 
       ctx.beginPath()
-      ctx.moveTo(position.x, position.y)
-      ctx.lineTo(node.position.x, node.position.y)
+      ctx.moveTo(this.x, this.y)
+      ctx.lineTo(node.x, node.y)
       ctx.closePath()
       ctx.stroke()
     }
