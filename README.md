@@ -2,6 +2,13 @@
 
 This is my sketch book on the internet.
 
+**WARNING:** The code is messy and each project can be inconsistent with the
+next. The purpose of this sketch book is to play around with ideas and to share
+them, not to write perfect code.
+
+If you have any questions, feel free to [send me a
+tweet](https://twitter.com/lejeunerenard).
+
 ## Experiments:
 
 - [Waveform map](experiments/waveform-map/)
