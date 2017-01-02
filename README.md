@@ -25,4 +25,5 @@ tweet](https://twitter.com/lejeunerenard).
 - [Barnsley Fern](./experiments/barnsley-fern/)
 - [Penrose Zoom](./experiments/penrose-zoom/)
 - [Hilbert Curve](./experiments/hilbert-curve/)
+- [Differential Growth List](./experiments/differential-list/)
 
