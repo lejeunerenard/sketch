@@ -1,0 +1,46 @@
+{
+  "name": "circle-packing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "budo index.js:bundle.js --live --open",
+    "build": "browserify index.js | uglifyjs -cm > bundle.js",
+    "test": "standard | snazzy"
+  },
+  "keywords": [],
+  "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babelify": "^7.3.0",
+    "budo": "^8.3.0",
+    "snazzy": "^4.0.0",
+    "standard": "^7.1.2",
+    "uglify-js": "^2.6.4"
+  },
+  "dependencies": {
+    "2d-context": "^1.3.0",
+    "canvas-loop": "^1.0.7",
+    "defined": "^1.0.0",
+    "object-assign": "^4.1.0",
+    "simple-quadtree": "^0.1.3"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  },
+  "standard": {
+    "global": [
+      "localStorage"
+    ]
+  }
+}

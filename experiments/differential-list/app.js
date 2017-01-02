@@ -1,7 +1,7 @@
 import createContex from '2d-context'
 import createLoop from 'canvas-loop'
 import assign from 'object-assign'
-import Vec2 from 'vec2'
+import { vec2 } from 'gl-matrix'
 import * as d3 from 'd3-quadtree'
 
 import Node from './node'
@@ -15,29 +15,26 @@ export default class App {
     let loop = createLoop(canvas, { scale: window.devicePixelRatio })
 
     // Create nodes
-    let nodes = []
-    let numNodes = 50
-    let radius = 125
-    for (let i = 0; i < numNodes; i++) {
-      let angle = i * 2 * Math.PI / numNodes
-      nodes.push(new Node(
-        new Vec2(
-          radius * Math.cos(angle),
-          radius * Math.sin(angle))))
+    this.nodes = []
+    let r = 125 / 4
+    let startNodes = []
+    const numOfBodies = 3
+    for (let i = 0; i < numOfBodies; i++) {
+      let angle = i * 2 * Math.PI / numOfBodies
+      startNodes.push(this.createBlob({
+        x: 1.2 * r * Math.cos(angle),
+        y: 1.2 * r * Math.sin(angle)
+      }, r))
     }
 
-    // Connect them
-    for (let i = 0; i < numNodes; i++) {
-      let next = (i === numNodes - 1) ? 0 : i + 1
-
-      nodes[i].connect(nodes[next])
-    }
+    let frame = 0
 
     assign(this, {
+      frame,
       loop,
       ctx,
       canvas,
-      nodes
+      startNodes
     })
 
     this.createQt()
@@ -47,11 +44,32 @@ export default class App {
     this.resize()
   }
 
+  createBlob (center, radius = 125) {
+    let nodes = []
+    let numNodes = 50
+    for (let i = 0; i < numNodes; i++) {
+      let angle = i * 2 * Math.PI / numNodes
+      let vec = vec2.fromValues(
+          radius * Math.cos(angle) + center.x,
+          radius * Math.sin(angle) + center.y)
+      nodes.push(new Node(vec))
+    }
+
+    // Connect them
+    for (let i = 0; i < numNodes; i++) {
+      let next = (i === numNodes - 1) ? 0 : i + 1
+
+      nodes[i].connect(nodes[next])
+    }
+    this.nodes = this.nodes.concat(nodes)
+    return nodes[0]
+  }
+
   createQt () {
     this.qt = d3.quadtree()
-      .x((d) => d.position.x)
-      .y((d) => d.position.y)
-      .addAll(this.nodes)
+      .x((d) => d.position[0])
+      .y((d) => d.position[1])
+    this.qt.addAll(this.nodes)
   }
 
   // Source: http://bl.ocks.org/mbostock/4343214
@@ -80,11 +98,14 @@ export default class App {
   }
 
   tick (dt) {
-    this.update(dt)
+    for (let i = 0; i < 2; i++) {
+      this.update(dt)
+    }
     this.render()
   }
 
   update (dt) {
+    this.frame++
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].update(dt, this)
     }
@@ -104,28 +125,34 @@ export default class App {
 
     ctx.translate(width / 2, height / 2)
 
+    if (app.debug) {
+      for (let node of this.nodes) {
+        node.render(ctx)
+      }
+    } else {
+      for (let firstNode of this.startNodes) {
+        ctx.beginPath()
+        ctx.moveTo(firstNode.position.x, firstNode.position.y)
+        let currentNode = this.nextNode(firstNode, firstNode)
+        let prevNode = firstNode
+        while (currentNode !== firstNode) {
+          let next = this.nextNode(prevNode, currentNode)
 
-    ctx.beginPath()
-    let firstNode = this.nodes[0] 
-    ctx.moveTo(firstNode.position.x, firstNode.position.y)
-    let currentNode = this.nextNode(firstNode, firstNode)
-    let prevNode = firstNode
-    while (currentNode !== firstNode) {
-      let next = this.nextNode(prevNode, currentNode)
+          // Curve Render
+          // source: http://stackoverflow.com/a/7058606/630490
+          let xc = (currentNode.x + next.x) / 2
+          let yc = (currentNode.y + next.y) / 2
 
-      // Curve Render
-      // source: http://stackoverflow.com/a/7058606/630490
-      let xc = (currentNode.x + next.x) / 2
-      let yc = (currentNode.y + next.y) / 2
+          ctx.quadraticCurveTo(currentNode.x, currentNode.y, xc, yc)
 
-      ctx.quadraticCurveTo(currentNode.x, currentNode.y, xc, yc)
-
-      prevNode = currentNode
-      currentNode = next
+          prevNode = currentNode
+          currentNode = next
+        }
+        ctx.closePath()
+        ctx.fill()
+        ctx.stroke()
+      }
     }
-    ctx.closePath()
-    ctx.fill()
-    ctx.stroke()
 
     ctx.restore()
   }
