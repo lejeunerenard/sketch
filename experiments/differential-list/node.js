@@ -98,7 +98,7 @@ export default class Node {
     // All others
     let displacement = scrap
     let norm = vec2.create()
-    const searchWidth = 50
+    const searchWidth = 25
     const pushK = 90000
     const pullK = 9
 
@@ -108,7 +108,7 @@ export default class Node {
       this.x + searchWidth,
       this.y + searchWidth)
 
-    app.nodes.filter((other) => other !== this).forEach((subNode) => {
+    others.filter((other) => other !== this).forEach((subNode) => {
       vec2.subtract(displacement, position, subNode.position)
       vec2.normalize(norm, displacement)
 
