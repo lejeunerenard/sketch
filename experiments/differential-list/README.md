@@ -28,6 +28,12 @@ npm i
 npm start
 ```
 
+## Build
+
+```bash
+npm run build
+```
+
 ## TODO List
 
 - [ ] Try implementing with [gl-matrix](https://github.com/toji/gl-matrix)

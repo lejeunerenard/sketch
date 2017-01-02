@@ -20,8 +20,9 @@
     "standard": "^7.0.1"
   },
   "scripts": {
-    "dev": "budo . --live --open",
+    "dev": "budo index.js:bundle.js --live --open",
     "start": "npm run dev",
+    "build": "browserify index.js > bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
