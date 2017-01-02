@@ -1,7 +1,7 @@
 import createContex from '2d-context'
 import createLoop from 'canvas-loop'
 import assign from 'object-assign'
-import Vec2 from 'vec2'
+import { vec2 } from 'gl-matrix'
 import * as d3 from 'd3-quadtree'
 
 import Node from './node'
@@ -21,7 +21,7 @@ export default class App {
     for (let i = 0; i < numNodes; i++) {
       let angle = i * 2 * Math.PI / numNodes
       nodes.push(new Node(
-        new Vec2(
+        vec2.fromValues(
           radius * Math.cos(angle),
           radius * Math.sin(angle))))
     }
@@ -49,8 +49,8 @@ export default class App {
 
   createQt () {
     this.qt = d3.quadtree()
-      .x((d) => d.position.x)
-      .y((d) => d.position.y)
+      .x((d) => d.position[0])
+      .y((d) => d.position[1])
       .addAll(this.nodes)
   }
 
@@ -104,28 +104,33 @@ export default class App {
 
     ctx.translate(width / 2, height / 2)
 
+    if (app.debug) {
+      for (let node of this.nodes) {
+        node.render(ctx)
+      }
+    } else {
+      ctx.beginPath()
+      let firstNode = this.nodes[0] 
+      ctx.moveTo(firstNode.position.x, firstNode.position.y)
+      let currentNode = this.nextNode(firstNode, firstNode)
+      let prevNode = firstNode
+      while (currentNode !== firstNode) {
+        let next = this.nextNode(prevNode, currentNode)
 
-    ctx.beginPath()
-    let firstNode = this.nodes[0] 
-    ctx.moveTo(firstNode.position.x, firstNode.position.y)
-    let currentNode = this.nextNode(firstNode, firstNode)
-    let prevNode = firstNode
-    while (currentNode !== firstNode) {
-      let next = this.nextNode(prevNode, currentNode)
+        // Curve Render
+        // source: http://stackoverflow.com/a/7058606/630490
+        let xc = (currentNode.x + next.x) / 2
+        let yc = (currentNode.y + next.y) / 2
 
-      // Curve Render
-      // source: http://stackoverflow.com/a/7058606/630490
-      let xc = (currentNode.x + next.x) / 2
-      let yc = (currentNode.y + next.y) / 2
+        ctx.quadraticCurveTo(currentNode.x, currentNode.y, xc, yc)
 
-      ctx.quadraticCurveTo(currentNode.x, currentNode.y, xc, yc)
-
-      prevNode = currentNode
-      currentNode = next
+        prevNode = currentNode
+        currentNode = next
+      }
+      ctx.closePath()
+      ctx.fill()
+      ctx.stroke()
     }
-    ctx.closePath()
-    ctx.fill()
-    ctx.stroke()
 
     ctx.restore()
   }
