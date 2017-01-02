@@ -111,10 +111,17 @@ export default class App {
     let currentNode = this.nextNode(firstNode, firstNode)
     let prevNode = firstNode
     while (currentNode !== firstNode) {
-      ctx.lineTo(currentNode.position.x, currentNode.position.y)
-      let tmp = currentNode
-      currentNode = this.nextNode(prevNode, currentNode)
-      prevNode = tmp
+      let next = this.nextNode(prevNode, currentNode)
+
+      // Curve Render
+      // source: http://stackoverflow.com/a/7058606/630490
+      let xc = (currentNode.x + next.x) / 2
+      let yc = (currentNode.y + next.y) / 2
+
+      ctx.quadraticCurveTo(currentNode.x, currentNode.y, xc, yc)
+
+      prevNode = currentNode
+      currentNode = next
     }
     ctx.closePath()
     ctx.fill()
