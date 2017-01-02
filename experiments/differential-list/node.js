@@ -22,6 +22,14 @@ export default class Node {
     })
   }
 
+  get x () {
+    return this.position.x
+  }
+
+  get y () {
+    return this.position.y
+  }
+
   connect (other) {
     if (!(other instanceof Node)) {
       throw new Error('You must connect to a Node')
@@ -81,7 +89,13 @@ export default class Node {
     let force = new Vec2(0, 0)
 
     // All others
-    app.nodes.filter((other) => other !== this).forEach((subNode) => {
+    const searchWidth = 50
+    let others = app.searchQt(
+      position.x - searchWidth,
+      position.y - searchWidth,
+      position.x + searchWidth,
+      position.y + searchWidth)
+    others.filter((other) => other !== this).forEach((subNode) => {
       let subdisplacement = position.clone().subtract(subNode.position)
 
       let pushK = 9000

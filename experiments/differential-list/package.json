@@ -9,6 +9,7 @@
     "browserify": "^13.0.1",
     "budo": "^8.2.2",
     "canvas-loop": "^1.0.7",
+    "d3-quadtree": "^1.0.2",
     "installify": "^1.0.2",
     "standard": "^7.0.1"
   },

@@ -2,6 +2,7 @@ import createContex from '2d-context'
 import createLoop from 'canvas-loop'
 import assign from 'object-assign'
 import Vec2 from 'vec2'
+import * as d3 from 'd3-quadtree'
 
 import Node from './node'
 
@@ -39,9 +40,35 @@ export default class App {
       nodes
     })
 
+    this.createQt()
+
     loop.on('tick', (dt) => this.tick(dt))
     loop.on('resize', () => this.resize())
     this.resize()
+  }
+
+  createQt () {
+    this.qt = d3.quadtree()
+      .x((d) => d.position.x)
+      .y((d) => d.position.y)
+      .addAll(this.nodes)
+  }
+
+  // Source: http://bl.ocks.org/mbostock/4343214
+  searchQt(x0, y0, x3, y3) {
+    let nodes = []
+    this.qt.visit((node, x1, y1, x2, y2) => {
+      if (!node.length) {
+        do {
+          var d = node.data
+          if ((d.x >= x0) && (d.x < x3) && (d.y >= y0) && (d.y < y3)) {
+            nodes.push(d)
+          }
+        } while (node = node.next)
+      }
+      return x1 >= x3 || y1 >= y3 || x2 < x0 || y2 < y0;
+    })
+    return nodes
   }
 
   resize () {
@@ -61,6 +88,7 @@ export default class App {
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].update(dt, this)
     }
+    this.createQt()
   }
 
   render () {
