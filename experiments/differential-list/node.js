@@ -8,7 +8,7 @@ export default class Node {
     let velocity = new Vec2(0, 0)
     let radius = 2
 
-    let spawnRate = Math.random() * 2 * 1000 + 1000
+    let spawnRate = 0.5 * (Math.random() * 2 * 1000 + 1000)
     let food = 0
 
     assign(this, {
@@ -20,6 +20,14 @@ export default class Node {
       position,
       radius
     })
+  }
+
+  get x () {
+    return this.position.x
+  }
+
+  get y () {
+    return this.position.y
   }
 
   connect (other) {
@@ -55,6 +63,7 @@ export default class Node {
     this.disconnect(other)
     other.disconnect(this)
 
+    // TODO refactor out componentwise
     let displacement = new Vec2(other.position.x, other.position.y)
       .subtract(position)
 
@@ -77,28 +86,50 @@ export default class Node {
     }
 
     // Motion
-    let accel = new Vec2(0, 0)
+    let force = new Vec2(0, 0)
 
-    nodes.forEach((node) => {
-      let displacement = position.clone().subtract(node.position.x, node.position.y)
+    // All others
+    const searchWidth = 50
+    let others = app.searchQt(
+      position.x - searchWidth,
+      position.y - searchWidth,
+      position.x + searchWidth,
+      position.y + searchWidth)
+    others.filter((other) => other !== this).forEach((subNode) => {
+      let subdisplacement = position.clone().subtract(subNode.position)
 
-      let pushK = 90
-      let push = displacement.clone()
+      let pushK = 900000
+      let push = subdisplacement.clone()
         .normalize()
-        .multiply(pushK * Math.max(radius * 10 - displacement.length(), 0))
-      accel.add(push.clone().divide(mass))
-
-      let pullK = 9
-      let pull = displacement.clone()
-        .normalize()
-        .multiply(-pullK * displacement.length())
-      accel.add(pull.clone().divide(mass))
-
-      velocity.add(accel.clone().multiply(dt / 1000))
+        .multiply(pushK * Math.max(radius / subdisplacement.lengthSquared(), 0))
+      force.add(push)
     })
 
+    nodes.forEach((node) => {
+      let displacement = position.clone().subtract(node.position)
+
+      let pullK = 90
+      let pull = displacement.clone()
+        .normalize()
+        .multiply(-pullK * displacement.lengthSquared())
+      force.add(pull)
+    })
+
+    // Hinge
+    let connect1 = this.nodes[0].position.clone().subtract(position)
+    let connect2 = this.nodes[1].position.clone().subtract(position)
+    let angle = Math.abs(connect1.angleTo(connect2))
+    let delta = this.nodes[1].position.clone().subtract(this.nodes[0].position).divide(2)
+    const idealAngle = 3 * Math.PI / 4
+    let correctionAmount = 10 * Math.abs(idealAngle - angle) / idealAngle
+    let hingeForce = delta.subtract(position).normalize().multiply(correctionAmount)
+    force.add(hingeForce)
+
     // Centering
-    // velocity.add(position.clone().multiply(-0.001))
+    velocity.add(position.clone().multiply(-0.001))
+
+    // Acceleration
+    velocity.add(force.divide(mass).multiply(dt / 1000))
 
     // Dampinging
     velocity.multiply(0.99)
