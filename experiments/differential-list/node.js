@@ -6,13 +6,13 @@ let scrap = vec2.create()
 let count = 0
 
 export default class Node {
-  constructor (position) {
+  constructor (position, spawnRate) {
     let nodes = []
     let mass = 1000
     let velocity = vec2.create()
     let radius = 2
 
-    let spawnRate = 0.5 * (Math.random() * 2 * 1000 + 1000)
+    spawnRate = spawnRate || 0.5 * (Math.random() * 2 * 1000 + 1000)
     let food = 0
     let id = count
     count++
@@ -59,6 +59,13 @@ export default class Node {
     this.nodes.splice(index, 1)
   }
 
+  feed (app) {
+    this.food++
+    if (this.food > this.spawnRate) {
+      this.spawn(app)
+    }
+  }
+
   spawn (app) {
     let { position } = this
 
@@ -75,7 +82,10 @@ export default class Node {
 
     let halfway = vec2.scaleAndAdd(scrap, position, displacement, .5)
 
-    let newBorn = new Node(vec2.clone(halfway))
+    let otherWeight = Math.random()
+    let newBornSpawn = otherWeight * other.spawnRate + (1 - otherWeight) * this.spawnRate
+
+    let newBorn = new Node(vec2.clone(halfway), newBornSpawn)
     newBorn.connect(this)
     newBorn.connect(other)
 
@@ -87,10 +97,7 @@ export default class Node {
     const dtMS = dt / 1000
 
     // Food / Spawn
-    this.food++
-    if (this.food > spawnRate) {
-      this.spawn(app)
-    }
+    this.feed(app)
 
     // Motion
     vec2.set(force, 0, 0)
@@ -122,6 +129,55 @@ export default class Node {
       vec2.normalize(norm, displacement)
 
       let mag = -pullK * vec2.squaredLength(displacement)
+      // force += displacement * mag
+      vec2.scaleAndAdd(force, force, norm, mag)
+    })
+
+    // Block
+    //let blockForce = vec2.fromValues(dx, dy)
+    //vec2.normalize(blockForce, blockForce)
+    //console.log('blockForce', blockForce)
+    //vec2.add(force, force, blockForce)
+    let boxPoints = [
+      { position: vec2.fromValues(100, 100) },
+      { position: vec2.fromValues(100, 75) },
+      { position: vec2.fromValues(100, 50) },
+      { position: vec2.fromValues(100, 25) },
+      { position: vec2.fromValues(100, 0) },
+      { position: vec2.fromValues(100, -25) },
+      { position: vec2.fromValues(100, -50) },
+      { position: vec2.fromValues(100, -75) },
+      { position: vec2.fromValues(100, -100) },
+      { position: vec2.fromValues(75, -100) },
+      { position: vec2.fromValues(50, -100) },
+      { position: vec2.fromValues(25, -100) },
+      { position: vec2.fromValues(0, -100) },
+      { position: vec2.fromValues(-25, -100) },
+      { position: vec2.fromValues(-50, -100) },
+      { position: vec2.fromValues(-75, -100) },
+      { position: vec2.fromValues(-100, -100) },
+      { position: vec2.fromValues(-100, -75) },
+      { position: vec2.fromValues(-100, -50) },
+      { position: vec2.fromValues(-100, -25) },
+      { position: vec2.fromValues(-100, 0) },
+      { position: vec2.fromValues(-100, 25) },
+      { position: vec2.fromValues(-100, 50) },
+      { position: vec2.fromValues(-100, 75) },
+      { position: vec2.fromValues(-100, 100) },
+      { position: vec2.fromValues(-75, 100) },
+      { position: vec2.fromValues(-50, 100) },
+      { position: vec2.fromValues(-25, 100) },
+      { position: vec2.fromValues(0, 100) },
+      { position: vec2.fromValues(25, 100) },
+      { position: vec2.fromValues(50, 100) },
+      { position: vec2.fromValues(75, 100) }
+    ]
+
+    boxPoints.filter((other) => other !== this).forEach((subNode) => {
+      vec2.subtract(displacement, position, subNode.position)
+      vec2.normalize(norm, displacement)
+
+      let mag = 10000 * Math.max(1 / (vec2.length(displacement)), 0)
       // force += displacement * mag
       vec2.scaleAndAdd(force, force, norm, mag)
     })

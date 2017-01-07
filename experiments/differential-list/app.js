@@ -14,16 +14,19 @@ export default class App {
 
     let loop = createLoop(canvas, { scale: window.devicePixelRatio })
 
+    this.width = window.innerWidth
+    this.height = window.innerHeight
+
     // Create nodes
     this.nodes = []
-    let r = 125 / 4
+    let r = 125
     let startNodes = []
-    const numOfBodies = 3
+    const numOfBodies = 2
     for (let i = 0; i < numOfBodies; i++) {
       let angle = i * 2 * Math.PI / numOfBodies
       startNodes.push(this.createBlob({
-        x: 1.2 * r * Math.cos(angle),
-        y: 1.2 * r * Math.sin(angle)
+        x: 1.2 * 200 * Math.cos(angle),
+        y: 1.2 * 200 * Math.sin(angle)
       }, r))
     }
 
@@ -62,7 +65,15 @@ export default class App {
       nodes[i].connect(nodes[next])
     }
     this.nodes = this.nodes.concat(nodes)
-    return nodes[0]
+
+    let xFill = (center.x / (this.width) + .5) * 255 * 3 / 2
+    let yFill = (center.y / (this.height) +.5) * 255 * 3 / 2
+    let fill = `rgb(${Math.floor(xFill)}, 0, ${Math.floor(yFill)})`
+
+    return {
+      firstNode: nodes[0],
+      fill
+    }
   }
 
   createQt () {
@@ -98,6 +109,7 @@ export default class App {
   }
 
   tick (dt) {
+    dt = Math.max(dt, 33)
     for (let i = 0; i < 2; i++) {
       this.update(dt)
     }
@@ -125,17 +137,20 @@ export default class App {
 
     ctx.translate(width / 2, height / 2)
 
+    ctx.fillStyle = 'black'
+    ctx.fillRect(-100, -100, 200, 200)
+
     if (app.debug) {
       for (let node of this.nodes) {
         node.render(ctx)
       }
     } else {
-      for (let firstNode of this.startNodes) {
+      for (let blob of this.startNodes) {
         ctx.beginPath()
-        ctx.moveTo(firstNode.position.x, firstNode.position.y)
-        let currentNode = this.nextNode(firstNode, firstNode)
-        let prevNode = firstNode
-        while (currentNode !== firstNode) {
+        ctx.moveTo(blob.firstNode.position.x, blob.firstNode.position.y)
+        let currentNode = this.nextNode(blob.firstNode, blob.firstNode)
+        let prevNode = blob.firstNode
+        while (currentNode !== blob.firstNode) {
           let next = this.nextNode(prevNode, currentNode)
 
           // Curve Render
@@ -149,8 +164,8 @@ export default class App {
           currentNode = next
         }
         ctx.closePath()
+        ctx.fillStyle = blob.fill
         ctx.fill()
-        ctx.stroke()
       }
     }
 
