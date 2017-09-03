@@ -10,7 +10,7 @@ document.body.appendChild(canvas)
 
 const app = new App()
 
-if (JSON.parse(localStorage.capture)) {
+if (JSON.parse(localStorage.capture || 'false')) {
   const fr = 60
   console.log('capturing')
   const capturer = new CCapture({
