@@ -73,7 +73,7 @@ export default class Node {
     // TODO refactor out componentwise
     let displacement = vec2.subtract(scrap, other.position, position)
 
-    let halfway = vec2.scaleAndAdd(scrap, position, displacement, .5)
+    let halfway = vec2.scaleAndAdd(scrap, position, displacement, 0.5)
 
     let newBorn = new Node(vec2.clone(halfway))
     newBorn.connect(this)

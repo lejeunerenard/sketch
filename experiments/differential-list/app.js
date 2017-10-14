@@ -73,7 +73,7 @@ export default class App {
   }
 
   // Source: http://bl.ocks.org/mbostock/4343214
-  searchQt(x0, y0, x3, y3) {
+  searchQt (x0, y0, x3, y3) {
     let nodes = []
     this.qt.visit((node, x1, y1, x2, y2) => {
       if (!node.length) {
@@ -82,9 +82,9 @@ export default class App {
           if ((d.x >= x0) && (d.x < x3) && (d.y >= y0) && (d.y < y3)) {
             nodes.push(d)
           }
-        } while (node = node.next)
+        } while (node = node.next) // eslint-disable-line no-cond-assign
       }
-      return x1 >= x3 || y1 >= y3 || x2 < x0 || y2 < y0;
+      return x1 >= x3 || y1 >= y3 || x2 < x0 || y2 < y0
     })
     return nodes
   }
@@ -125,7 +125,7 @@ export default class App {
 
     ctx.translate(width / 2, height / 2)
 
-    if (app.debug) {
+    if (this.debug) {
       for (let node of this.nodes) {
         node.render(ctx)
       }
