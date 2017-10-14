@@ -108,7 +108,9 @@ export default class Node {
       this.x + searchWidth,
       this.y + searchWidth)
 
-    others.filter((other) => other !== this).forEach((subNode) => {
+    others.forEach((subNode) => {
+      if (subNode === this) return
+
       vec2.subtract(displacement, position, subNode.position)
       vec2.normalize(norm, displacement)
 
