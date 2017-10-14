@@ -1,5 +1,8 @@
 import assign from 'object-assign'
 import { vec2 } from 'gl-matrix'
+import SimplexNoise from 'simplex-noise'
+
+const simplex = new SimplexNoise()
 
 let force = vec2.create()
 let scrap = vec2.create()
@@ -108,13 +111,15 @@ export default class Node {
       this.x + searchWidth,
       this.y + searchWidth)
 
+    let noise = 0.9 * simplex.noise2D(0.02 * position[0], 0.02 * position[1])
+
     others.forEach((subNode) => {
       if (subNode === this) return
 
       vec2.subtract(displacement, position, subNode.position)
       vec2.normalize(norm, displacement)
 
-      let mag = pushK * Math.max(radius / vec2.squaredLength(displacement), 0)
+      let mag = (pushK + pushK * noise) * Math.max(radius / vec2.squaredLength(displacement), 0)
       // force += displacement * mag
       vec2.scaleAndAdd(force, force, norm, mag)
     })
@@ -123,7 +128,7 @@ export default class Node {
       vec2.subtract(displacement, position, node.position)
       vec2.normalize(norm, displacement)
 
-      let mag = -pullK * vec2.squaredLength(displacement)
+      let mag = -(pullK + pullK * noise) * vec2.squaredLength(displacement)
       // force += displacement * mag
       vec2.scaleAndAdd(force, force, norm, mag)
     })

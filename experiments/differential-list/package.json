@@ -12,6 +12,8 @@
     "d3-quadtree": "^1.0.2",
     "gl-matrix": "^2.3.2",
     "installify": "^1.0.2",
+    "object-assign": "^4.1.1",
+    "simplex-noise": "^2.3.0",
     "standard": "^7.0.1"
   },
   "devDependencies": {
