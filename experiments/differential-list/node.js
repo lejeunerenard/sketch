@@ -28,7 +28,8 @@ export default class Node {
       mass,
       velocity,
       position,
-      radius
+      radius,
+      fixed: false
     })
   }
 
@@ -73,7 +74,7 @@ export default class Node {
     this.disconnect(other)
     other.disconnect(this)
 
-    // TODO refactor out componentwise
+    // TODO refactor out component-wise
     let displacement = vec2.subtract(scrap, other.position, position)
 
     let halfway = vec2.scaleAndAdd(scrap, position, displacement, 0.5)
@@ -88,6 +89,8 @@ export default class Node {
   update (dt, app) {
     let { position, nodes, radius, velocity, spawnRate } = this
     const dtMS = dt / 1000
+
+    if (this.fixed) return
 
     // Food / Spawn
     this.food++

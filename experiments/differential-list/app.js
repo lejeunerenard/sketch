@@ -135,8 +135,10 @@ export default class App {
         ctx.moveTo(firstNode.position.x, firstNode.position.y)
         let currentNode = this.nextNode(firstNode, firstNode)
         let prevNode = firstNode
-        while (currentNode !== firstNode) {
+        while (currentNode && currentNode !== firstNode) {
           let next = this.nextNode(prevNode, currentNode)
+
+          if (!next) break
 
           // Curve Render
           // source: http://stackoverflow.com/a/7058606/630490
