@@ -27,7 +27,9 @@ export default class App {
     assign(this, {
       ctx,
       canvas,
-      startNodes
+      startNodes,
+      prevT: 0,
+      accumulatedT: 0
     })
 
     this.createQt()
@@ -89,8 +91,16 @@ export default class App {
   }
 
   tick (dt) {
-    for (let i = 0; i < 2; i++) {
-      this.update(dt)
+    let temp = dt
+    dt = dt - this.prevT
+    this.prevT = temp
+
+    this.accumulatedT += dt
+    const STEP = 16.666667
+
+    while (this.accumulatedT > STEP) {
+      this.update(STEP)
+      this.accumulatedT -= STEP
     }
 
     this.render()
