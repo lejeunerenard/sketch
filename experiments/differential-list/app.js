@@ -1,18 +1,15 @@
 import createContex from '2d-context'
-import createLoop from 'canvas-loop'
 import assign from 'object-assign'
 import { vec2 } from 'gl-matrix'
 import * as d3 from 'd3-quadtree'
 
 import Node from './node'
 
-export default class App {
-  constructor () {
-    const ctx = createContex()
-    const canvas = ctx.canvas
-    document.body.appendChild(canvas)
+const dpr = window.devicePixelRatio
 
-    let loop = createLoop(canvas, { scale: window.devicePixelRatio })
+export default class App {
+  constructor (canvas) {
+    const ctx = createContex({ canvas })
 
     // Create nodes
     this.nodes = []
@@ -27,11 +24,7 @@ export default class App {
       }, r))
     }
 
-    let frame = 0
-
     assign(this, {
-      frame,
-      loop,
       ctx,
       canvas,
       startNodes
@@ -39,8 +32,6 @@ export default class App {
 
     this.createQt()
 
-    loop.on('tick', (dt) => this.tick(dt))
-    loop.on('resize', () => this.resize())
     this.resize()
   }
 
@@ -90,7 +81,7 @@ export default class App {
   }
 
   resize () {
-    let [width, height] = this.loop.shape
+    let { width, height } = this.canvas
     assign(this, {
       width,
       height
@@ -101,11 +92,11 @@ export default class App {
     for (let i = 0; i < 2; i++) {
       this.update(dt)
     }
+
     this.render()
   }
 
   update (dt) {
-    this.frame++
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].update(dt, this)
     }
@@ -116,7 +107,6 @@ export default class App {
     let { ctx, width, height } = this
     ctx.save()
 
-    const dpr = window.devicePixelRatio
     ctx.scale(dpr, dpr)
 
     ctx.clearRect(0, 0, width, height)
@@ -164,9 +154,5 @@ export default class App {
         return other
       }
     }
-  }
-
-  start () {
-    this.loop.start()
   }
 }
