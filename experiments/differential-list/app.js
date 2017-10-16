@@ -1,15 +1,13 @@
-import createContex from '2d-context'
 import assign from 'object-assign'
 import { vec2 } from 'gl-matrix'
 import { quadtree } from 'd3-quadtree'
 
+import Canvas2DRenderer from './renderer/canvas-2d'
 import Node from './node'
-
-const dpr = window.devicePixelRatio
 
 export default class App {
   constructor (canvas) {
-    const ctx = createContex({ canvas })
+    this.renderer = new Canvas2DRenderer(canvas)
 
     // Create nodes
     this.nodes = []
@@ -25,8 +23,6 @@ export default class App {
     }
 
     assign(this, {
-      ctx,
-      canvas,
       startNodes,
       prevT: 0,
       accumulatedT: 0
@@ -83,11 +79,7 @@ export default class App {
   }
 
   resize () {
-    let { width, height } = this.canvas
-    assign(this, {
-      width,
-      height
-    })
+    this.renderer.resize()
   }
 
   tick (dt) {
@@ -114,49 +106,7 @@ export default class App {
   }
 
   render () {
-    let { ctx, width, height } = this
-    ctx.save()
-
-    ctx.scale(dpr, dpr)
-
-    ctx.clearRect(0, 0, width, height)
-    // ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
-    // ctx.fillRect(0, 0, width, height)
-
-    ctx.translate(width / 2, height / 2)
-
-    if (this.debug) {
-      for (let node of this.nodes) {
-        node.render(ctx)
-      }
-    } else {
-      for (let firstNode of this.startNodes) {
-        ctx.beginPath()
-        ctx.moveTo(firstNode.position.x, firstNode.position.y)
-        let currentNode = this.nextNode(firstNode, firstNode)
-        let prevNode = firstNode
-        while (currentNode && currentNode !== firstNode) {
-          let next = this.nextNode(prevNode, currentNode)
-
-          if (!next) break
-
-          // Curve Render
-          // source: http://stackoverflow.com/a/7058606/630490
-          let xc = (currentNode.x + next.x) / 2
-          let yc = (currentNode.y + next.y) / 2
-
-          ctx.quadraticCurveTo(currentNode.x, currentNode.y, xc, yc)
-
-          prevNode = currentNode
-          currentNode = next
-        }
-        ctx.closePath()
-        ctx.fill()
-        ctx.stroke()
-      }
-    }
-
-    ctx.restore()
+    this.renderer.render(this)
   }
 
   nextNode (prev, node) {
