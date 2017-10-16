@@ -1,7 +1,7 @@
 import createContex from '2d-context'
 import assign from 'object-assign'
 import { vec2 } from 'gl-matrix'
-import * as d3 from 'd3-quadtree'
+import { quadtree } from 'd3-quadtree'
 
 import Node from './node'
 
@@ -59,7 +59,7 @@ export default class App {
   }
 
   createQt () {
-    this.qt = d3.quadtree()
+    this.qt = quadtree()
       .x((d) => d.position[0])
       .y((d) => d.position[1])
     this.qt.addAll(this.nodes)
