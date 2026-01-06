@@ -12,22 +12,18 @@
     "three": ""
   },
   "devDependencies": {
-    "babel-preset-es2015": "",
-    "babelify": "",
-    "browserify": "",
-    "budo": "",
-    "installify": "",
-    "snazzy": "^4.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.5",
     "standard": "",
-    "uglify-js": "^2.6.2"
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   },
   "scripts": {
     "test": "npm run lint",
-    "lint": "standard | snazzy",
-    "dev": "budo index.js:bundle.js --live --open",
-    "build:prod": "npm run build:bundle & npm run build:capture",
-    "build:bundle": "browserify index.js | uglifyjs -cm > bundle.js",
-    "build:capture": "browserify capture.js | uglifyjs -cm > bundle.capture.js"
+    "lint": "standard",
+    "dev": "webpack server --open",
+    "build": "webpack"
   },
   "keywords": [
     "3d",
@@ -35,26 +31,14 @@
   ],
   "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com)",
   "license": "MIT",
-  "browserify": {
-    "transform": [
-      "babelify",
-      [
-        "installify",
-        {
-          "save": true
-        }
-      ]
-    ]
-  },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
   "standard": {
     "globals": [
       "localStorage",
       "requestAnimationFrame"
+    ],
+    "ignore": [
+      "bundle.js",
+      "bundle.capture.js"
     ]
   }
 }

@@ -1,13 +1,13 @@
 import createLoop from 'canvas-fit-loop'
 import App from './app'
 
-let app = new App()
+const app = new App()
 window.app = app
 
-let capture = (localStorage.capture !== 'false' && localStorage.capture)
+const capture = (localStorage.capture !== 'false' && localStorage.capture)
 
 if (capture) {
-  let captureScript = document.createElement('script')
+  const captureScript = document.createElement('script')
   document.body.appendChild(captureScript)
   captureScript.src = 'bundle.capture.js'
 } else {

@@ -1,4 +1,4 @@
-import THREE from 'three'
+import * as THREE from 'three'
 import assign from 'object-assign'
 
 const magenta = 0xf321b0
@@ -20,23 +20,21 @@ export default class App {
 
     const scene = new THREE.Scene()
 
-    const geo = new THREE.SphereBufferGeometry(5, 64, 64)
+    const geo = new THREE.SphereGeometry(5, 64, 64)
     const mat = new THREE.MeshLambertMaterial({ color: magenta })
     const sphere = new THREE.Mesh(geo, mat)
     sphere.position.set(0, 0, 0)
     scene.add(sphere)
 
     // Lighting
-    const ambient = new THREE.AmbientLight(orange)
-    ambient.intensity = 0.85
+    const ambient = new THREE.AmbientLight(orange, 0.85)
     scene.add(ambient)
 
-    const white = new THREE.AmbientLight(0xffffff)
-    white.intensity = 0.85
+    const white = new THREE.AmbientLight(0xffffff, 0.85)
     scene.add(white)
 
-    const keyPoint = new THREE.PointLight(0xffffff, 1, 100)
-    keyPoint.intensity = 0.65
+    // TODO This light isn't affecting the model after Three update
+    const keyPoint = new THREE.PointLight(0xffffff, 0.65, 100)
     keyPoint.position.set(20, 20, 5)
     scene.add(keyPoint)
 

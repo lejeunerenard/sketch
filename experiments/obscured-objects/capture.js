@@ -2,18 +2,17 @@ import fitter from 'canvas-fit'
 import CCapture from 'ccapture.js'
 import defined from 'defined'
 
-let app = window.app
-let captureLength = defined(localStorage.captureLength || 10)
+const app = window.app
+const captureLength = defined(localStorage.captureLength || 10)
 
 fitter(app.canvas)
 
-let capturer
-let framerate = 30
-capturer = new CCapture({ format: 'jpg', framerate, verbose: true })
+const framerate = 30
+const capturer = new CCapture({ format: 'jpg', framerate, verbose: true })
 capturer.start()
 
 let frames = 0
-let dt = 1 / framerate * 1000
+const dt = 1 / framerate * 1000
 
 // Helpers
 function render () {
