@@ -1,9 +1,9 @@
-import debug from 'debug'
 import Fiber from './fiber'
 import raf from 'raf'
+import * as dat from 'dat.gui'
 
-let debugFiber = debug('fiber')
-let debugApp = debug('app')
+let debugFiber = (...args) => console.log('fiber', ...args)
+let debugApp = (...args) => console.log('app', ...args)
 
 class App {
 
