@@ -2,11 +2,10 @@ import Fiber from './fiber'
 import raf from 'raf'
 import * as dat from 'dat.gui'
 
-let debugFiber = (...args) => console.log('fiber', ...args)
-let debugApp = (...args) => console.log('app', ...args)
+const debugFiber = (...args) => console.log('fiber', ...args)
+const debugApp = (...args) => console.log('app', ...args)
 
 class App {
-
   constructor (options) {
     options = options || {}
 
@@ -51,7 +50,7 @@ class App {
     })
 
     // GUI
-    var gui = new dat.GUI()
+    const gui = new dat.GUI()
     gui.add(this, 'density').min(4)
   }
 
@@ -112,14 +111,14 @@ class App {
   createFibers (offset, width, height) {
     debugApp('create fired params', offset, width, height)
 
-    let columns = width / this._density
-    let rows = height / this._density
+    const columns = width / this._density
+    const rows = height / this._density
 
     debugApp('create fired dimensions', columns, rows)
     for (let i = 0; i < columns; i++) {
       for (let j = 0; j < rows; j++) {
-        let rotation = Math.random() * 2 * Math.PI
-        let length = Math.random() * 2 + 3
+        const rotation = Math.random() * 2 * Math.PI
+        const length = Math.random() * 2 + 3
 
         this.fibers.push(new Fiber({
           rotation,
@@ -149,5 +148,5 @@ class App {
   }
 }
 
-let app = new App({ density: 15 })
+const app = new App({ density: 15 })
 app.draw()

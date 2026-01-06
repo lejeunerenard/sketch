@@ -25,13 +25,13 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Development',
+      title: 'Development'
     })
   ],
   devServer: {
     static: path.resolve(__dirname, 'dist')
   },
   optimization: {
-   runtimeChunk: 'single',
+    runtimeChunk: 'single'
   }
 }
