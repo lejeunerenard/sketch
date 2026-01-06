@@ -9,7 +9,7 @@
     "ccapture.js": "^1.0.3",
     "defined": "^1.0.0",
     "object-assign": "",
-    "three": ""
+    "three": ">=0.182.0"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
